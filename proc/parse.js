@@ -46,7 +46,6 @@ lia.forEach((l, i) => {
 // console.log(container);
 console.log(li.length);
 
-fs.writeJSONSync("commands.json",output,{
-spaces:4,
+fs.writeJSONSync("commands.json", _.sortBy(output, "name"), {
+    spaces: 4,
 });
-
