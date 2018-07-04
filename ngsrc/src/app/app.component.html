@@ -1,0 +1,24 @@
+<div class="root mat-app-background" fxLayout="column">
+  <div class="top mat-body-1" fxLayout="row" fxLayoutAlign="start center">
+    <div class="icon"></div>
+    <div class="ellipsis-wrap" fxFlex>
+      <!-- <span *ngIf="redisConfig && redisConfig.username && redisConfig.username.length>0">{{ redisConfig.username }}</span>
+      <span *ngIf="redisConfig && redisConfig.username && redisConfig.username.length>0">@</span>
+      <span *ngIf="redisConfig && redisConfig.host && redisConfig.host.length>0">{{ redisConfig.host }}</span>
+      <span *ngIf="redisConfig && redisConfig.port">:</span>
+      <span *ngIf="redisConfig && redisConfig.port">{{ redisConfig.port }}</span> -->
+      aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    </div>
+    <button mat-icon-button>
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  <div #client fxFlex class="client">
+    <div>{{ redisConfig | json }}</div>
+    <div>{{ isDark }}</div>
+  </div>
+  <div class="bottom" fxLayout="row">
+    <input #command class="command mat-body-1" fxFlex type="text" placeholder="Enter redis command..." />
+    <button mat-button color="accent">EXECUTE</button>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+ @import '~@angular/material/theming';
+ // vscode-light — Light themes.
+ // vscode-dark — Dark themes.
+ // vscode-high-contrast — High contrast themes.
+ body.vscode-dark {
+   .renderjson a {
+     text-decoration: none;
+   } // .renderjson .disclosure {
+   //   color: crimson;
+   //   font-size: 150%;
+   // }
+   .renderjson .syntax {
+     color: grey;
+   }
+   .renderjson .string {
+     color: #50fa7b;
+   }
+   .renderjson .number {
+     color: #8be9fd	;
+   }
+   .renderjson .boolean {
+     color: #ff79c6	;
+   }
+   .renderjson .key {
+     color: #bd93f9	;
+   }
+   .renderjson .keyword {
+     color: #ff5555	;
+   }
+   .renderjson .object.syntax {
+     color: lightseagreen;
+   }
+   .renderjson .array.syntax {
+     color: lightsalmon;
+   }
+ }

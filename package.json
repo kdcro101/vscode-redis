@@ -1,0 +1,64 @@
+{
+    "name": "vscode-redis",
+    "displayName": "vscode-redis",
+    "description": "Redis console for Visual Studio code",
+    "version": "0.0.1",
+    "publisher": "kdcro101",
+    "engines": {
+        "vscode": "^1.24.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.startConsole"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "commands": [{
+            "command": "extension.startConsole",
+            "title": "Start REDIS console"
+        }],
+        "configuration": {
+            "type": "object",
+            "title": "vscode-redis configuration",
+            "properties": {
+                "redis-console.host": {
+                    "type": "string",
+                    "default": "localhost",
+                    "description": "Redis server ip or hostname"
+                },
+                "redis-console.port": {
+                    "type": "number",
+                    "default": 6379,
+                    "description": "Redis server listening port"
+                },
+                "redis-console.username": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Username to use when connecting"
+                },
+                "redis-console.password": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Password to use when connecting"
+                }
+
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "tslint": "^5.8.0",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    }
+}
