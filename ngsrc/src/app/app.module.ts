@@ -2,7 +2,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 import { NgModule } from "@angular/core";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { MatButtonModule, MatIconModule, MatRippleModule } from "@angular/material";
+import { MatButtonModule, MatIconModule, MatRippleModule, MatTooltipModule } from "@angular/material";
 
 import { CommonModule } from "@angular/common";
 import { AppComponent } from "./app.component";
@@ -15,6 +15,7 @@ import { AppComponent } from "./app.component";
     FlexLayoutModule,
     MatRippleModule,
     MatButtonModule,
+    MatTooltipModule,
   ],
   declarations: [
     AppComponent

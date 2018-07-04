@@ -46,7 +46,8 @@
           }
           .disclosure {
             margin: 4px;
-            padding: 3px 5px 0px 5px;
+            padding: 1px 5px 0;
+            line-height: 100%;
             margin-right: 8px;
             text-decoration: none;
             outline: none;
@@ -68,15 +69,15 @@
       padding: 8px;
       background-color: rgba(0, 0, 0, 0.125);
       .command {
+        margin-left: 8px;
+        margin-right: 8px;
         padding: 4px;
         color: var(--vscode-editor-foreground);
         outline: none;
         border: none;
         background: transparent;
       }
-      button {
-        margin-left: 8px;
-      }
+
     }
   }
 }

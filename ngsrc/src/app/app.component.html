@@ -9,8 +9,8 @@
       <span *ngIf="redisConfig && redisConfig.port">{{ redisConfig.port }}</span> -->
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     </div>
-    <button mat-icon-button>
-      <mat-icon>delete</mat-icon>
+    <button mat-icon-button matTooltip="Clear output" matTooltipPosition="below">
+      <mat-icon>clear_all</mat-icon>
     </button>
   </div>
   <div #client fxFlex class="client">
@@ -18,6 +18,9 @@
     <div>{{ isDark }}</div>
   </div>
   <div class="bottom" fxLayout="row">
+    <button mat-icon-button>
+      <mat-icon>history</mat-icon>
+    </button>
     <input #command class="command mat-body-1" fxFlex type="text" placeholder="Enter redis command..." />
     <button mat-button color="accent">EXECUTE</button>
   </div>
