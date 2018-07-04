@@ -15,10 +15,12 @@
     ],
     "main": "./out/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.startConsole",
-            "title": "Start REDIS console"
-        }],
+        "commands": [
+            {
+                "command": "extension.startConsole",
+                "title": "Start REDIS console"
+            }
+        ],
         "configuration": {
             "type": "object",
             "title": "vscode-redis configuration",
@@ -43,7 +45,6 @@
                     "default": "",
                     "description": "Password to use when connecting"
                 }
-
             }
         }
     },
@@ -55,10 +56,14 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
-        "tslint": "^5.8.0",
+        "@types/ioredis": "^3.2.11",
+        "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "tslint": "^5.8.0",
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6"
+    },
+    "dependencies": {
+        "ioredis": "^3.2.2"
     }
 }
