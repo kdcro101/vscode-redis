@@ -1,3 +1,9 @@
+export interface CommandLineParsed {
+    redis_command: string;
+    command_line: string;
+    valid: boolean;
+    error?: string;
+}
 export interface MessageEventList {
     e2w_connection_state: EventDataConnection;
     w2e_redis_execute_request: EventDataRedisExecuteRequest;

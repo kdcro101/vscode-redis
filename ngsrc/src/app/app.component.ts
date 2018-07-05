@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from "@angular/core";
 import renderjson from "renderjson";
-import { fromEvent as observableFromEvent, Observable, Subject } from "rxjs";
-import { filter, map } from "rxjs/operators";
-import { EventDataConnection, ProcMessage, ProcMessageType, RedisConsoleConfig } from "../../../src/types/index";
+import { fromEvent as observableFromEvent, Observable, of as observableOf, Subject } from "rxjs";
+import { catchError, concatMap, debounceTime, filter, map, tap } from "rxjs/operators";
+import { CommandLineParsed, EventDataConnection, ProcMessage, ProcMessageType, RedisConsoleConfig } from "../../../src/types/index";
 import { generateId } from "../const/string-id/index";
 import { OutputItem, OutputItemStrict } from "../types";
 import { VscodeMessageInterface } from "../types/vscode";
-import { commandReference } from "./reference";
+import { extractRedisCommand, isRedisCommand, isValidInput } from "./reference";
 
 declare var codeFontFamily: string;
 declare var redisConfig: RedisConsoleConfig;
@@ -28,7 +28,9 @@ export class AppComponent implements OnInit {
     public redisConfig: RedisConsoleConfig = redisConfig;
     public isDark: boolean = false;
 
-    public commandCurrent: string = "abc";
+    public commandLineCurrent: string = "abc";
+    public commandLineError: boolean = false;
+    public commandInProgress: boolean = false;
     // .....................
     public isConnected: boolean = false;
     public connectionDesc: string = "";
@@ -38,7 +40,11 @@ export class AppComponent implements OnInit {
     public eventCommandKeyup: Observable<KeyboardEvent> = null;
     public emitRedisExecute = new Subject<void>();
 
-    constructor(private host: ElementRef<HTMLDivElement>, public change: ChangeDetectorRef) {
+    constructor(
+        private host: ElementRef<HTMLDivElement>,
+        public change: ChangeDetectorRef,
+        private zone: NgZone,
+    ) {
 
         this.connectionDesc = `${this.redisConfig.host}:${this.redisConfig.port}`;
         (window as any).AppComponent = this;
@@ -71,11 +77,74 @@ export class AppComponent implements OnInit {
         this.eventCommandChange = observableFromEvent(this.command.nativeElement, "change");
         this.eventCommandKeyup = observableFromEvent<KeyboardEvent>(this.command.nativeElement, "keyup");
 
+        // check enter on input!
         this.eventCommandKeyup.pipe(
             filter((e) => e.keyCode === 13),
-            map<KeyboardEvent, string>(() => this.command.nativeElement.value),
-            filter((s) => s.length > 1),
-        ).subscribe((line) => this.redisCommandExecute(line));
+            filter(() => this.commandLineCurrent.length > 1),
+        ).subscribe(() => this.emitRedisExecute.next());
+
+        // check input validity
+        this.eventCommandKeyup.pipe(
+            // debounceTime(500),
+            map<any, boolean>(() => {
+                return isValidInput(this.commandLineCurrent);
+            }),
+        ).subscribe((isValid) => {
+            this.commandLineError = isValid ? false : true;
+            this.change.detectChanges();
+        });
+
+        // main execute emition
+        this.emitRedisExecute.pipe(
+            filter(() => this.commandLineCurrent.length > 1),
+            tap(() => {
+                this.commandInProgress = true;
+                this.change.detectChanges();
+            }),
+            map<void, CommandLineParsed>(() => {
+                const c = extractRedisCommand(this.commandLineCurrent);
+                const isCommand = isRedisCommand(c);
+                console.log(`comandline: ${this.commandLineCurrent} command: ${c} isValid: ${isCommand}`);
+                if (isCommand) {
+                    console.log(`Command ${c} is valid`);
+                    return {
+                        command_line: this.commandLineCurrent,
+                        redis_command: c,
+                        valid: true,
+                    };
+                } else {
+                    console.log(`Command ${c} is INVALID`);
+                    this.commandInProgress = false;
+                    this.change.detectChanges();
+                    throw new Error(`${c} is not valid command`);
+                    // return {
+                    //     command_line: this.commandLineCurrent,
+                    //     redis_command: c,
+                    //     valid: false,
+                    //     error: `${c.toLocaleUpperCase()} is not valid Redis command`,
+                    // };
+                }
+            }),
+            tap<CommandLineParsed>((data) => {
+
+            }),
+            filter((data) => data.valid === true),
+            concatMap(() => this.redisCommandExecute(this.commandLineCurrent)),
+            catchError((e, o) => {
+                console.log(e);
+                return o;
+            })
+        ).subscribe((e) => {
+            console.log(e);
+
+            this.commandInProgress = false;
+            this.change.detectChanges();
+            console.log("Execute done!");
+        }, (e) => {
+            this.commandInProgress = false;
+            this.change.detectChanges();
+            console.log(e);
+        });
 
         const element: HTMLDivElement = renderjson(
             {
@@ -159,6 +228,12 @@ export class AppComponent implements OnInit {
 
     }
     private redisCommandExecute(commandLine: string) {
-        console.log(`redisCommandExecute: ${commandLine}`);
+        return new Promise((resolve, reject) => {
+
+            console.log(`redisCommandExecute: ${commandLine}`);
+            setTimeout(() => {
+                resolve();
+            }, 2000);
+        });
     }
 }

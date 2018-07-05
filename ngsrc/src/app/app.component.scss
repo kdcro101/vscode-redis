@@ -94,6 +94,10 @@
         outline: none;
         border: none;
         background: transparent;
+
+        &.error{
+            color: mat-color($warn,500);
+        }
       }
     }
   }
