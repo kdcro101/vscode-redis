@@ -1,3 +1,6 @@
+@import "../scss/theme";
+@import "./scss/output-item";
+
 :host {
   .mat-app-background {
     background-color: transparent;
@@ -32,8 +35,8 @@
       color: var(--vscode-editor-foreground);
       position: relative;
       overflow-x: auto;
-      overflow-y: auto;
-      padding: 16px;
+      overflow-y: auto; // padding: 16px;
+
       ::ng-deep {
         .renderjson {
           font-family: var(--vscode-editor-font-family);
@@ -64,6 +67,21 @@
     .top {
       padding: 8px;
       background-color: rgba(0, 0, 0, 0.125);
+      .indicator {
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        border: 1px solid mat-color($background, 500);
+        margin-right: 8px;
+        box-sizing: border-box;
+        &.active {
+          border: none;
+          background-color: #50fa7b;
+        }
+      }
+      button {
+        margin-left: 8px;
+      }
     }
     .bottom {
       padding: 8px;
@@ -77,7 +95,6 @@
         border: none;
         background: transparent;
       }
-
     }
   }
 }

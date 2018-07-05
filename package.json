@@ -35,15 +35,15 @@
                     "default": 6379,
                     "description": "Redis server listening port"
                 },
-                "redis-console.username": {
-                    "type": "string",
-                    "default": "",
+                "redis-console.hostIpFamily": {
+                    "type": "number",
+                    "default": 4,
                     "description": "Username to use when connecting"
                 },
                 "redis-console.password": {
                     "type": "string",
                     "default": "",
-                    "description": "Password to use when connecting"
+                    "description": "Password to use when connecting, leave empty for no password"
                 }
             }
         }
@@ -66,6 +66,7 @@
     },
     "dependencies": {
         "fs-extra": "^6.0.1",
-        "ioredis": "^3.2.2"
+        "ioredis": "^3.2.2",
+        "rxjs": "^6.2.1"
     }
 }

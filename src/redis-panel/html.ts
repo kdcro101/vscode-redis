@@ -1,9 +1,9 @@
 
 import * as path from "path";
 import * as vscode from "vscode";
-import { RedisClientConfig } from "./index";
+import { RedisConsoleConfig } from "../types";
 
-export const generateHtml = (basePath: string, config: RedisClientConfig) => {
+export const generateHtml = (basePath: string, config: RedisConsoleConfig) => {
     //   const iconsPath = "vscode-resource:" + this.context.extensionPath + "/svg/symbol-sprite.svg";
     const ws = vscode.workspace.getConfiguration(null, null);
     const fontFamily = ws.editor.fontFamily;
@@ -20,6 +20,7 @@ export const generateHtml = (basePath: string, config: RedisClientConfig) => {
             <script>
             var codeFontFamily = "${fontFamily}";
             var redisConfig = JSON.parse('${configString}');
+            const vscode = acquireVsCodeApi();
             </script>
         </head>
         <body>

@@ -25,6 +25,7 @@
     "@angular/router": "^6.0.3",
     "core-js": "^2.5.4",
     "hoek": "^4.2.1",
+    "lodash-es": "^4.17.10",
     "renderjson": "^1.4.0",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
@@ -36,6 +37,7 @@
     "@angular/language-service": "^6.0.3",
     "@types/jasmine": "~2.8.6",
     "@types/jasminewd2": "~2.0.3",
+    "@types/lodash-es": "^4.17.0",
     "@types/node": "~8.9.4",
     "codelyzer": "~4.2.1",
     "jasmine-core": "~2.99.1",

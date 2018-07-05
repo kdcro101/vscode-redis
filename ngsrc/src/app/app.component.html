@@ -1,27 +1,32 @@
 <div class="root mat-app-background" fxLayout="column">
-  <div class="top mat-body-1" fxLayout="row" fxLayoutAlign="start center">
-    <div class="icon"></div>
-    <div class="ellipsis-wrap" fxFlex>
-      <!-- <span *ngIf="redisConfig && redisConfig.username && redisConfig.username.length>0">{{ redisConfig.username }}</span>
-      <span *ngIf="redisConfig && redisConfig.username && redisConfig.username.length>0">@</span>
-      <span *ngIf="redisConfig && redisConfig.host && redisConfig.host.length>0">{{ redisConfig.host }}</span>
-      <span *ngIf="redisConfig && redisConfig.port">:</span>
-      <span *ngIf="redisConfig && redisConfig.port">{{ redisConfig.port }}</span> -->
-      aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    <div class="top mat-body-1" fxLayout="row" fxLayoutAlign="start center">
+        <div class="icon"></div>
+        <div class="indicator" [class.active]="isConnected"></div>
+        <div class="ellipsis-wrap" fxFlex>
+            {{connectionDesc}}
+        </div>
+        <button mat-icon-button matTooltip="Command reference" matTooltipPosition="below">
+            <mat-icon>help_outline</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Clear output" matTooltipPosition="below">
+            <mat-icon>clear_all</mat-icon>
+        </button>
     </div>
-    <button mat-icon-button matTooltip="Clear output" matTooltipPosition="below">
-      <mat-icon>clear_all</mat-icon>
-    </button>
-  </div>
-  <div #client fxFlex class="client">
-    <div>{{ redisConfig | json }}</div>
-    <div>{{ isDark }}</div>
-  </div>
-  <div class="bottom" fxLayout="row">
-    <button mat-icon-button>
-      <mat-icon>history</mat-icon>
-    </button>
-    <input #command class="command mat-body-1" fxFlex type="text" placeholder="Enter redis command..." />
-    <button mat-button color="accent">EXECUTE</button>
-  </div>
+    <div #client fxFlex class="client">
+        <div class="output-item" *ngFor="let i of output;trackBy:trackById;let ix=index;" [ngSwitch]="i.type">
+            <div id="{{i.id}}" *ngSwitchCase="'infoSuccess'" class="infoSuccess mat-caption" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="icon-18">check</mat-icon>
+                <div class="text">{{ i.data.text }}</div>
+                <div class="interval">{{ i.data.time }}</div>
+                <div class="unit">ms</div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom" fxLayout="row">
+        <button mat-icon-button>
+            <mat-icon>history</mat-icon>
+        </button>
+        <input #command class="command mat-body-1" fxFlex [(ngModel)]="commandCurrent" type="text" placeholder="Enter redis command..." />
+        <button mat-button color="accent">EXECUTE</button>
+    </div>
 </div>

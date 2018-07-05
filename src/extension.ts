@@ -3,6 +3,7 @@
 // Import the module and reference it with the alias vscode in your code below
 
 import * as vscode from "vscode";
+import { ConfigManager } from "./config-manager";
 import { RedisLog } from "./log/index";
 import { RedisPanel } from "./redis-panel/index";
 import { Workspace } from "./workspace";
@@ -11,15 +12,20 @@ import { Workspace } from "./workspace";
 export function activate(context: vscode.ExtensionContext) {
     const workspace = new Workspace();
     const log = new RedisLog(workspace);
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
+    const configManager = new ConfigManager(workspace);
+    const config = configManager.get();
+    let redisPanel: RedisPanel = null;
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
+    // save to expose config in workspace settings
+    configManager.save(config);
+
     const disposable = vscode.commands.registerCommand("extension.startConsole", () => {
-        const redisPanel = new RedisPanel(context);
-        redisPanel.open();
+        if (RedisPanel.opened) {
+            redisPanel.reveal();
+            return;
+        }
+        redisPanel = new RedisPanel(context, config);
+        redisPanel.start();
     });
 
     context.subscriptions.push(disposable);

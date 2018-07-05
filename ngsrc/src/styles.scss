@@ -1,3 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
+
 @import "./scss/theme";
 @import "./scss/renderjson";
+// Define an alternate dark theme.
+$dark-primary: mat-palette($mat-indigo, 400);
+$dark-accent: mat-palette($mat-pink);
+$dark-warn: mat-palette($mat-red);
+$mat-font-family: Roboto,
+'Helvetica Neue',
+sans-serif;
+$typography: mat-typography-config();
+$default-theme: mat-light-theme($primary, $accent, $warn);
+$dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+@include angular-material-theme($default-theme);
+.dark-theme {
+  @include angular-material-theme($dark-theme);
+}
+
+mat-icon.icon-18 {
+  height: 18px;
+  width: 18px;
+  line-height: 18px;
+  font-size: 18px;
+}

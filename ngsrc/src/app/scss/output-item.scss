@@ -1,0 +1,26 @@
+@import "../../scss/theme";
+:host {
+  .root {
+    .client {
+      .output-item {
+        padding: 8px; // color: var(--vscode-editor-foreground);
+        background-color: rgba(0, 0, 0, 0.07);
+        margin-top: 1px;
+        .infoSuccess {
+          mat-icon {
+            color: #50fa7b;
+            margin-right: 8px;
+          }
+          .interval {
+            margin-left: 8px;
+            margin-right: 4px;
+            color: mat-color($background, 500);
+          }
+          .unit {
+            color: mat-color($background, 500);
+          }
+        }
+      }
+    }
+  }
+}

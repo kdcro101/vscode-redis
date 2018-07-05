@@ -5,14 +5,16 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatButtonModule, MatIconModule, MatRippleModule, MatTooltipModule } from "@angular/material";
 
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { AppComponent } from "./app.component";
 
 @NgModule({
   imports: [
-    CommonModule,
-    MatIconModule,
     BrowserAnimationsModule,
+    CommonModule,
+    FormsModule,
     FlexLayoutModule,
+    MatIconModule,
     MatRippleModule,
     MatButtonModule,
     MatTooltipModule,
