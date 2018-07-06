@@ -5,7 +5,7 @@
         <div class="ellipsis-wrap" fxFlex>
             {{connectionDesc}}
         </div>
-        <button mat-icon-button matTooltip="Command reference" matTooltipPosition="below">
+        <button mat-icon-button matTooltip="Command reference" matTooltipPosition="below" (click)="helper.stateCommandReference.next(true)">
             <mat-icon>help_outline</mat-icon>
         </button>
         <button mat-icon-button matTooltip="Clear output" matTooltipPosition="below" (click)="outputClear()">
@@ -13,6 +13,9 @@
         </button>
     </div>
     <div #client fxFlex class="client">
+        <!-- <div>
+            <a href="https://www.google.com" target="_blank">Google</a>
+        </div> -->
         <div class="output-item" *ngFor="let i of output;trackBy:trackById;let ix=index;" [ngSwitch]="i.type">
             <div id="{{i.id}}" *ngSwitchCase="'infoSuccess'" class="emphisized infoSuccess mat-caption" fxLayout="row" fxLayoutAlign="start center">
                 <mat-icon class="icon-18">check</mat-icon>
@@ -50,3 +53,4 @@
         <button mat-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">EXECUTE</button>
     </div>
 </div>
+<command-reference [@animReference]  *ngIf="helper.stateCommandReference | async"></command-reference>

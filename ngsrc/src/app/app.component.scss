@@ -1,6 +1,11 @@
 @import "../scss/theme";
 @import "./scss/output-item";
 :host {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     .mat-app-background {
         background-color: transparent;
     }
@@ -21,11 +26,6 @@
         white-space: nowrap;
         overflow: hidden;
     }
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     .root {
         position: absolute;
         top: 0;

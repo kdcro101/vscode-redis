@@ -1,16 +1,18 @@
+import { animate, style, transition, trigger } from "@angular/animations";
 import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
 import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from "@angular/core";
 import renderjson from "renderjson";
 import { fromEvent as observableFromEvent, Observable, Subject } from "rxjs";
 import { catchError, concatMap, filter, map, tap } from "rxjs/operators";
-import { EventDataRedisExecuteResponse } from "../../../src/types/index";
 import {
     CommandLineParsed,
     EventDataConnection, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
 } from "../../../src/types/index";
+import { EventDataRedisExecuteResponse } from "../../../src/types/index";
 import { OutputItem, OutputItemStrict } from "../types";
 import { VscodeMessageInterface } from "../types/vscode";
 import { extractRedisCommand, extractRedisCommandArguments, isRedisCommand, isValidInput } from "./reference";
+import { HelperService } from "./services/helper.service";
 import { generateId, requestId, responseId } from "./string-id/index";
 
 declare var codeFontFamily: string;
@@ -24,6 +26,30 @@ declare var vscode: VscodeMessageInterface;
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: [
+        trigger("animReference", [
+            transition(":enter", [
+                style({
+                    transform: "scale3d(0.01,0.01,1)",
+                    opacity: 0,
+                }),
+                animate("200ms ease-in-out", style({
+                    transform: "scale3d(1,1,1)",
+                    opacity: 1,
+                })),
+            ]),
+            transition(":leave", [
+                style({
+                    transform: "scale3d(1,1,1)",
+                    opacity: 1,
+                }),
+                animate("200ms ease-in-out", style({
+                    transform: "scale3d(0.01,0.01,1)",
+                    opacity: 0,
+                })),
+            ])
+        ])
+    ]
 })
 export class AppComponent implements OnInit {
     @ViewChild("client") public client: ElementRef<HTMLDivElement>;
@@ -48,6 +74,7 @@ export class AppComponent implements OnInit {
         private host: ElementRef<HTMLDivElement>,
         public change: ChangeDetectorRef,
         private zone: NgZone,
+        public helper: HelperService,
     ) {
 
         this.connectionDesc = `${this.redisConfig.host}:${this.redisConfig.port}`;
@@ -81,6 +108,7 @@ export class AppComponent implements OnInit {
         };
         vscode.postMessage(eReady);
         // -----------------------------------------------------
+        this.helper.stateCommandReference.subscribe(() => this.change.detectChanges());
 
         this.command.nativeElement.style.fontFamily = codeFontFamily;
 

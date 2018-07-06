@@ -7,3 +7,4 @@ src/**
 tsconfig.json
 tslint.json
 ngsrc/**/*
+proc.tar.gz

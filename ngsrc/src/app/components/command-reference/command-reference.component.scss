@@ -1,0 +1,63 @@
+@import "../../../scss/theme";
+:host {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 100;
+    .root {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        mat-toolbar {
+            mat-toolbar-row {
+                .logo {
+                    font-weight: 200;
+                }
+                .title {
+                    text-overflow: ellipsis;
+                    min-width: 0;
+                    position: relative;
+                }
+            }
+        }
+        .client {
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 16px;
+            .command {
+                margin-bottom: 32px;
+                .title{
+                    margin-bottom: 2px;
+                    .link{
+                        margin-left:8px;
+                        opacity: 0.6;
+                        border-radius: 50%;
+                        overflow: hidden;
+                        position: relative;
+                        color: var(--vscode-editor-foreground);
+                        text-decoration: none;
+                        outline: none;
+                        padding: 8px;
+                        &:hover{
+                            opacity: 1;
+                        }
+                    }
+                    .name{
+                        margin-bottom: 0px;
+                    }
+                }
+                .args {
+                    color: mat-color($background, 500);
+                    margin-bottom: 4px;
+                }
+            }
+        }
+        .actions {
+            padding: 8px;
+        }
+    }
+}
