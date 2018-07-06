@@ -1,13 +1,17 @@
 import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
 import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from "@angular/core";
 import renderjson from "renderjson";
-import { fromEvent as observableFromEvent, Observable, of as observableOf, Subject } from "rxjs";
-import { catchError, concatMap, debounceTime, filter, map, tap } from "rxjs/operators";
-import { CommandLineParsed, EventDataConnection, ProcMessage, ProcMessageType, RedisConsoleConfig } from "../../../src/types/index";
+import { fromEvent as observableFromEvent, Observable, Subject } from "rxjs";
+import { catchError, concatMap, filter, map, tap } from "rxjs/operators";
+import { EventDataRedisExecuteResponse } from "../../../src/types/index";
+import {
+    CommandLineParsed,
+    EventDataConnection, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
+} from "../../../src/types/index";
 import { generateId } from "../const/string-id/index";
 import { OutputItem, OutputItemStrict } from "../types";
 import { VscodeMessageInterface } from "../types/vscode";
-import { extractRedisCommand, isRedisCommand, isValidInput } from "./reference";
+import { extractRedisCommand, extractRedisCommandArguments, isRedisCommand, isValidInput } from "./reference";
 
 declare var codeFontFamily: string;
 declare var redisConfig: RedisConsoleConfig;
@@ -28,7 +32,7 @@ export class AppComponent implements OnInit {
     public redisConfig: RedisConsoleConfig = redisConfig;
     public isDark: boolean = false;
 
-    public commandLineCurrent: string = "abc";
+    public commandLineCurrent: string = null;
     public commandLineError: boolean = false;
     public commandInProgress: boolean = false;
     // .....................
@@ -103,6 +107,7 @@ export class AppComponent implements OnInit {
             }),
             map<void, CommandLineParsed>(() => {
                 const c = extractRedisCommand(this.commandLineCurrent);
+                const a = extractRedisCommandArguments(this.commandLineCurrent);
                 const isCommand = isRedisCommand(c);
                 console.log(`comandline: ${this.commandLineCurrent} command: ${c} isValid: ${isCommand}`);
                 if (isCommand) {
@@ -110,6 +115,7 @@ export class AppComponent implements OnInit {
                     return {
                         command_line: this.commandLineCurrent,
                         redis_command: c,
+                        redis_arguments: a,
                         valid: true,
                     };
                 } else {
@@ -117,19 +123,14 @@ export class AppComponent implements OnInit {
                     this.commandInProgress = false;
                     this.change.detectChanges();
                     throw new Error(`${c} is not valid command`);
-                    // return {
-                    //     command_line: this.commandLineCurrent,
-                    //     redis_command: c,
-                    //     valid: false,
-                    //     error: `${c.toLocaleUpperCase()} is not valid Redis command`,
-                    // };
                 }
             }),
             tap<CommandLineParsed>((data) => {
-
+                console.log("CommandLineParsed");
+                console.log(data);
             }),
             filter((data) => data.valid === true),
-            concatMap(() => this.redisCommandExecute(this.commandLineCurrent)),
+            concatMap((data) => this.redisCommandExecute(data)),
             catchError((e, o) => {
                 console.log(e);
                 return o;
@@ -146,45 +147,11 @@ export class AppComponent implements OnInit {
             console.log(e);
         });
 
-        const element: HTMLDivElement = renderjson(
-            {
-                "glossary": {
-                    "title": "example glossary",
-                    "comprehensive": true,
-                    "link": undefined,
-                    "count": 1,
-                    "GlossDiv": {
-                        "title": "S",
-                        "GlossList": {
-                            "GlossEntry": {
-                                "ID": "SGML",
-                                "SortAs": "SGML",
-                                "GlossTerm": "Standard Generalized Markup Language",
-                                "Acronym": "SGML",
-                                "Abbrev": "ISO 8879:1986",
-                                "GlossDef": {
-                                    "para": "A meta-markup language, used to create markup languages such as DocBook.",
-                                    "GlossSeeAlso": ["GML", "XML"]
-                                },
-                                "GlossSee": "markup"
-                            }
-                        }
-                    }
-                }
-            }
-        );
-
-        element.style.fontFamily = codeFontFamily;
-        this.client.nativeElement.appendChild(element);
-
         window.addEventListener("message", event => {
             const message = event.data; // The JSON data our extension sent
 
         });
-        vscode.postMessage({
-            command: "alert",
-            data: "on line ",
-        });
+
     }
     private onIncommingMessage(event: MessageEvent) {
         const message = event.data as ProcMessage;
@@ -227,13 +194,83 @@ export class AppComponent implements OnInit {
         this.change.detectChanges();
 
     }
-    private redisCommandExecute(commandLine: string) {
+    private redisCommandExecute(command: CommandLineParsed) {
+        return new Promise((resolve, reject) => {
+            console.log(`redisCommandExecute: ${command.command_line}`);
+
+            const id = generateId();
+            const request: ProcMessageStrict<"w2e_redis_execute_request"> = {
+                name: "w2e_redis_execute_request",
+                data: {
+                    id,
+                    command,
+                },
+            };
+
+            const outItemRequest: OutputItemStrict<"request"> = {
+                id,
+                type: "request",
+                data: {
+                    command: `${command.redis_command}`,
+                    args: `${command.redis_arguments.join(" ")}`,
+                }
+            };
+
+            this.output.push(outItemRequest);
+            this.change.detectChanges();
+
+            vscode.postMessage(request);
+            this.eventMessage.pipe(
+                map<MessageEvent, ProcMessage>((event) => event.data),
+                filter((data) => data.name === "e2w_redis_execute_response"),
+                map<ProcMessage, ProcMessageStrict<"e2w_redis_execute_response">>((data) => {
+                    return data as ProcMessageStrict<"e2w_redis_execute_response">;
+                }),
+                filter((data) => data.name === "e2w_redis_execute_response"),
+                filter((data) => data.data.id === id),
+                concatMap((data) => this.processRedisResponse(data.data)),
+            ).subscribe(() => {
+
+                resolve();
+            }, (e) => {
+                reject(e);
+            });
+
+        });
+    }
+    private processRedisResponse(data: EventDataRedisExecuteResponse): Promise<void> {
         return new Promise((resolve, reject) => {
 
-            console.log(`redisCommandExecute: ${commandLine}`);
-            setTimeout(() => {
-                resolve();
-            }, 2000);
+            if (data.error == null) {
+
+                const outItemResponse: OutputItemStrict<"response"> = {
+                    id: data.id,
+                    type: "response",
+                    data: {
+                        response: JSON.stringify(data.result),
+                        time: data.time,
+                    }
+                };
+                this.output.push(outItemResponse);
+                this.change.detectChanges();
+                const client = document.getElementById(`response-${data.id}-client`);
+
+                let input: any = null;
+                try {
+                    input = JSON.parse(data.result);
+                } catch (e) {
+                    input = data.result;
+                }
+
+                const element = renderjson(input);
+                element.style.fontFamily = codeFontFamily;
+                client.appendChild(element);
+
+            } else {
+
+            }
+
+            resolve();
         });
     }
 }

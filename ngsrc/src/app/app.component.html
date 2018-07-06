@@ -1,6 +1,6 @@
 <div class="root mat-app-background" fxLayout="column">
     <div class="top mat-body-1" fxLayout="row" fxLayoutAlign="start center">
-        <div class="icon"></div>
+        <div class="icon header"></div>
         <div class="indicator" [class.active]="isConnected"></div>
         <div class="ellipsis-wrap" fxFlex>
             {{connectionDesc}}
@@ -14,11 +14,26 @@
     </div>
     <div #client fxFlex class="client">
         <div class="output-item" *ngFor="let i of output;trackBy:trackById;let ix=index;" [ngSwitch]="i.type">
-            <div id="{{i.id}}" *ngSwitchCase="'infoSuccess'" class="infoSuccess mat-caption" fxLayout="row" fxLayoutAlign="start center">
+            <div id="{{i.id}}" *ngSwitchCase="'infoSuccess'" class="emphisized infoSuccess mat-caption" fxLayout="row" fxLayoutAlign="start center">
                 <mat-icon class="icon-18">check</mat-icon>
                 <div class="text">{{ i.data.text }}</div>
-                <div class="interval">{{ i.data.time }}</div>
-                <div class="unit">ms</div>
+                <div class="interval">{{ i.data.time }} ms</div>
+            </div>
+            <div id="request-{{i.id}}" *ngSwitchCase="'request'" class="emphisized request mat-caption" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="icon-18">keyboard_arrow_right</mat-icon>
+                <div class="command">{{ i.data.command }}</div>
+                <div class="args">{{ i.data.args }}</div>
+            </div>
+            <div id="response-{{i.id}}" *ngSwitchCase="'response'" class="response mat-caption" fxLayout="column">
+                <div class="header" fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon class="icon-18">subdirectory_arrow_right</mat-icon>
+                    <div class="text">OK</div>
+                    <div fxFlex></div>
+                    <div class="time">{{ i.data.time }} ms</div>
+                </div>
+                <div id="response-{{i.id}}-client">
+
+                </div>
             </div>
         </div>
     </div>
@@ -26,7 +41,8 @@
         <button mat-icon-button>
             <mat-icon>history</mat-icon>
         </button>
-        <input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [(ngModel)]="commandLineCurrent" type="text" placeholder="Enter redis command..." />
+        <input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [(ngModel)]="commandLineCurrent" type="text" placeholder="Enter redis command..."
+        />
         <button mat-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">EXECUTE</button>
     </div>
 </div>

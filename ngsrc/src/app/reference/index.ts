@@ -53,6 +53,19 @@ export function compactCommandLine(commandLine: string): string {
     console.log(`compactCommandLine(${commandLine})=${c}`);
     return c;
 }
+export function extractRedisCommandArguments(commandLine: string): string[] {
+    const c = compactCommandLine(commandLine);
+    if (c == null || c.trim() === "") {
+        return [];
+    }
+    const sp = c.split(" ");
+
+    if (sp.length === 0) {
+        return [];
+    }
+    const out = sp.slice(1);
+    return out;
+}
 export function extractRedisCommand(commandLine: string): string {
     const c = compactCommandLine(commandLine);
 
@@ -65,13 +78,6 @@ export function extractRedisCommand(commandLine: string): string {
     console.log(`extractRedisCommand(${commandLine})=${rc}`);
 
     return rc;
-    // const isCommand = isRedisCommand(rc);
-
-    // if (isCommand) {
-    //     return rc;
-    // } else {
-    //     return null;
-    // }
 
 }
 export const commandReference: CommandReferenceItem[] = [

@@ -1,5 +1,5 @@
 import * as Redis from "ioredis";
-import { RedisConsoleConfig } from "../types";
+import { CommandLineParsed, RedisConsoleConfig } from "../types";
 
 export class RedisClient {
     public client: Redis.Redis = null;
@@ -31,6 +31,16 @@ export class RedisClient {
 
         });
 
+    }
+    public execute(command: CommandLineParsed) {
+        return new Promise((resolve, reject) => {
+            this.client.send_command(command.redis_command, ...command.redis_arguments)
+                .then((result) => {
+                    resolve(result);
+                }).catch((e) => {
+                    reject(e);
+                });
+        });
     }
 
 }

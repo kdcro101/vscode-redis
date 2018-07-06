@@ -1,8 +1,9 @@
+import { ProcMessage } from "../../../src/types/index";
 
 export interface VscodeMessageData<T> {
-  command: string;
-  data: T;
+    command: string;
+    data: T;
 }
 export interface VscodeMessageInterface {
-  postMessage: <T>(data: VscodeMessageData<T>) => void;
+    postMessage: <T>(data: ProcMessage) => void;
 }

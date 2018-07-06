@@ -1,26 +1,55 @@
 @import "../../scss/theme";
 :host {
-  .root {
-    .client {
-      .output-item {
-        padding: 8px; // color: var(--vscode-editor-foreground);
-        background-color: rgba(0, 0, 0, 0.07);
-        margin-top: 1px;
-        .infoSuccess {
-          mat-icon {
-            color: #50fa7b;
-            margin-right: 8px;
-          }
-          .interval {
-            margin-left: 8px;
-            margin-right: 4px;
-            color: mat-color($background, 500);
-          }
-          .unit {
-            color: mat-color($background, 500);
-          }
+    .root {
+        .client {
+            .output-item {
+                // background-color: rgba(0, 0, 0, 0.07);
+                margin-top: 1px;
+                .emphisized {
+                    background-color: rgba(0, 0, 0, 0.07);
+                }
+                .infoSuccess {
+                    padding: 8px; // color: var(--vscode-editor-foreground);
+                    mat-icon {
+                        color: #50fa7b;
+                        margin-right: 8px;
+                    }
+                    .interval {
+                        margin-left: 8px;
+                        margin-right: 4px;
+                        color: mat-color($background, 500);
+                    }
+                }
+                .request {
+                    mat-icon {
+                        color: var(--vscode-editor-foreground);
+                        margin-right: 8px;
+                    }
+                    .command {
+                        margin-right: 8px;
+                        text-transform: uppercase;
+                    }
+                    .args {
+                        color: mat-color($background, 400);
+                    }
+                }
+                .response {
+                    padding: 8px; // color: var(--vscode-editor-foreground);
+                    .header {
+                        mat-icon {
+                            color: var(--vscode-editor-foreground);
+                            margin-right: 8px;
+                        }
+                        .text {
+                            margin-right: 8px;
+                            text-transform: uppercase;
+                        }
+                        .time {
+                            color: mat-color($background, 500);
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
