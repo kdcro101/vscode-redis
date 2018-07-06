@@ -28,15 +28,9 @@
                     <div class="time">{{ i.data.time }} ms</div>
                     <mat-icon class="icon-18 success" *ngIf="i.data.resultType==='success'">check</mat-icon>
                     <mat-icon class="icon-18 failure" *ngIf="i.data.resultType==='failure'">error_outline</mat-icon>
-                 </div>
+                </div>
             </div>
             <div id="{{i.id}}" *ngSwitchCase="'response'" class="response mat-caption" fxLayout="column">
-                <div class="header" fxLayout="row" fxLayoutAlign="start center">
-                    <mat-icon class="icon-18">subdirectory_arrow_right</mat-icon>
-                    <div class="text">OK</div>
-                    <div fxFlex></div>
-                    <div class="time">{{ i.data.time }} ms</div>
-                </div>
                 <div id="{{i.id}}-client">
 
                 </div>

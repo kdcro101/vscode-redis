@@ -20,7 +20,7 @@ export class RedisPanel {
         private config: RedisConsoleConfig,
     ) {
         this.redis = new RedisClient(this.config);
-        this.panel = vscode.window.createWebviewPanel("redis-console", "Redis console", vscode.ViewColumn.Three, {
+        this.panel = vscode.window.createWebviewPanel("redis-console", "Redis console", vscode.ViewColumn.Beside, {
             // Enable javascript in the webview
             enableScripts: true,
             // And restric the webview to only loading content from our extension's `media` directory.
