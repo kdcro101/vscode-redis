@@ -116,7 +116,7 @@ export class RedisPanel {
                 };
                 this.panel.webview.postMessage(response);
 
-            }).catch((e) => {
+            }).catch((e: any) => {
                 console.log(e);
                 const response: ProcMessageStrict<"e2w_redis_execute_response"> = {
                     name: "e2w_redis_execute_response",
@@ -124,7 +124,7 @@ export class RedisPanel {
                         id: data.id,
                         result: null,
                         time: Date.now() - tstart,
-                        error: e,
+                        error: e.message || e,
                     },
                 };
                 this.panel.webview.postMessage(response);

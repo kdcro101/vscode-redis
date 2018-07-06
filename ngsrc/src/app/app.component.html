@@ -8,7 +8,7 @@
         <button mat-icon-button matTooltip="Command reference" matTooltipPosition="below">
             <mat-icon>help_outline</mat-icon>
         </button>
-        <button mat-icon-button matTooltip="Clear output" matTooltipPosition="below">
+        <button mat-icon-button matTooltip="Clear output" matTooltipPosition="below" (click)="outputClear()">
             <mat-icon>clear_all</mat-icon>
         </button>
     </div>
@@ -18,6 +18,10 @@
                 <mat-icon class="icon-18">check</mat-icon>
                 <div class="text">{{ i.data.text }}</div>
                 <div class="interval">{{ i.data.time }} ms</div>
+            </div>
+            <div id="{{i.id}}" *ngSwitchCase="'infoError'" class="emphisized infoError mat-caption" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="icon-18">check</mat-icon>
+                <div class="text" fxFlex>{{ i.data }}</div>
             </div>
             <div id="{{i.id}}" *ngSwitchCase="'request'" class="emphisized request mat-caption" fxLayout="row" fxLayoutAlign="start center">
                 <mat-icon class="icon-18">keyboard_arrow_right</mat-icon>
@@ -31,7 +35,7 @@
                 </div>
             </div>
             <div id="{{i.id}}" *ngSwitchCase="'response'" class="response mat-caption" fxLayout="column">
-                <div id="{{i.id}}-client">
+                <div id="{{i.id}}-client" class="response-client">
 
                 </div>
             </div>

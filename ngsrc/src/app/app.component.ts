@@ -281,6 +281,12 @@ export class AppComponent implements OnInit {
             } else {
 
                 oReq.data.resultType = "failure";
+                const outItemError: OutputItemStrict<"infoError"> = {
+                    id: uiResponseId,
+                    type: "infoError",
+                    data: data.error,
+                };
+                this.output.push(outItemError);
                 this.change.detectChanges();
 
             }
@@ -294,5 +300,9 @@ export class AppComponent implements OnInit {
         const sh = e.scrollHeight;
         e.scrollTop = sh;
 
+    }
+    public outputClear = () => {
+        this.output = [];
+        this.change.detectChanges();
     }
 }

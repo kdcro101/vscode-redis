@@ -13,11 +13,23 @@
                     mat-icon {
                         color: #50fa7b;
                         margin-right: 8px;
+                        visibility: hidden;
                     }
                     .interval {
                         margin-left: 8px;
                         margin-right: 4px;
                         color: mat-color($background, 500);
+                    }
+                }
+                .infoError {
+                    padding: 8px; // color: var(--vscode-editor-foreground);
+                    mat-icon {
+                        color: #50fa7b;
+                        margin-right: 8px;
+                        visibility: hidden;
+                    }
+                    .text {
+                        color: mat-color($warn, 500);
                     }
                 }
                 .request {
@@ -51,18 +63,10 @@
                 }
                 .response {
                     padding: 8px; // color: var(--vscode-editor-foreground);
-                    .header {
-                        mat-icon {
-                            color: var(--vscode-editor-foreground);
-                            margin-right: 8px;
-                        }
-                        .text {
-                            margin-right: 8px;
-                            text-transform: uppercase;
-                        }
-                        .time {
-                            color: mat-color($background, 500);
-                        }
+                    .response-client {
+                        overflow-x: auto;
+                        padding-left: 16px;
+                        padding-right: 16px;
                     }
                 }
             }
