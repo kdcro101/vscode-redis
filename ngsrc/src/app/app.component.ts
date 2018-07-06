@@ -8,10 +8,10 @@ import {
     CommandLineParsed,
     EventDataConnection, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
 } from "../../../src/types/index";
-import { generateId } from "../const/string-id/index";
 import { OutputItem, OutputItemStrict } from "../types";
 import { VscodeMessageInterface } from "../types/vscode";
 import { extractRedisCommand, extractRedisCommandArguments, isRedisCommand, isValidInput } from "./reference";
+import { generateId, requestId, responseId } from "./string-id/index";
 
 declare var codeFontFamily: string;
 declare var redisConfig: RedisConsoleConfig;
@@ -199,6 +199,8 @@ export class AppComponent implements OnInit {
             console.log(`redisCommandExecute: ${command.command_line}`);
 
             const id = generateId();
+            const uiRequestId = requestId(id);
+
             const request: ProcMessageStrict<"w2e_redis_execute_request"> = {
                 name: "w2e_redis_execute_request",
                 data: {
@@ -208,7 +210,7 @@ export class AppComponent implements OnInit {
             };
 
             const outItemRequest: OutputItemStrict<"request"> = {
-                id,
+                id: uiRequestId,
                 type: "request",
                 data: {
                     command: `${command.redis_command}`,
@@ -218,6 +220,7 @@ export class AppComponent implements OnInit {
 
             this.output.push(outItemRequest);
             this.change.detectChanges();
+            this.scrollToBottom();
 
             vscode.postMessage(request);
             this.eventMessage.pipe(
@@ -230,7 +233,7 @@ export class AppComponent implements OnInit {
                 filter((data) => data.data.id === id),
                 concatMap((data) => this.processRedisResponse(data.data)),
             ).subscribe(() => {
-
+                this.scrollToBottom();
                 resolve();
             }, (e) => {
                 reject(e);
@@ -241,10 +244,19 @@ export class AppComponent implements OnInit {
     private processRedisResponse(data: EventDataRedisExecuteResponse): Promise<void> {
         return new Promise((resolve, reject) => {
 
+            const uiRequestId = requestId(data.id);
+            const uiResponseId = responseId(data.id);
+            const requestIndex = this.output.findIndex((i) => i.id === uiRequestId);
+            const oReq = (this.output[requestIndex] as OutputItemStrict<"request">);
+
+            oReq.data.time = data.time;
+
             if (data.error == null) {
 
+                oReq.data.resultType = "success";
+
                 const outItemResponse: OutputItemStrict<"response"> = {
-                    id: data.id,
+                    id: uiResponseId,
                     type: "response",
                     data: {
                         response: JSON.stringify(data.result),
@@ -268,9 +280,19 @@ export class AppComponent implements OnInit {
 
             } else {
 
+                oReq.data.resultType = "failure";
+                this.change.detectChanges();
+
             }
 
             resolve();
         });
+    }
+    private scrollToBottom() {
+
+        const e = this.client.nativeElement;
+        const sh = e.scrollHeight;
+        e.scrollTop = sh;
+
     }
 }

@@ -1,3 +1,5 @@
+import { RedisExecuteRequestResult } from "../../../src/types/index";
+
 export interface OutputItemInfoSuccess {
     text: string;
     time: number;
@@ -10,6 +12,8 @@ export interface OutputItemRequest {
     command: string;
     args: string;
     eventTime?: string;
+    resultType?:  RedisExecuteRequestResult;
+    time?: number;
 }
 export interface OutputItemTypes {
     infoSuccess: OutputItemInfoSuccess;

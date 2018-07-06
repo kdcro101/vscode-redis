@@ -19,19 +19,25 @@
                 <div class="text">{{ i.data.text }}</div>
                 <div class="interval">{{ i.data.time }} ms</div>
             </div>
-            <div id="request-{{i.id}}" *ngSwitchCase="'request'" class="emphisized request mat-caption" fxLayout="row" fxLayoutAlign="start center">
+            <div id="{{i.id}}" *ngSwitchCase="'request'" class="emphisized request mat-caption" fxLayout="row" fxLayoutAlign="start center">
                 <mat-icon class="icon-18">keyboard_arrow_right</mat-icon>
                 <div class="command">{{ i.data.command }}</div>
                 <div class="args">{{ i.data.args }}</div>
+                <div fxFlex></div>
+                <div class="request-result" *ngIf="i.data.resultType" fxLayout="row" fxLayoutAlign="start center">
+                    <div class="time">{{ i.data.time }} ms</div>
+                    <mat-icon class="icon-18 success" *ngIf="i.data.resultType==='success'">check</mat-icon>
+                    <mat-icon class="icon-18 failure" *ngIf="i.data.resultType==='failure'">error_outline</mat-icon>
+                 </div>
             </div>
-            <div id="response-{{i.id}}" *ngSwitchCase="'response'" class="response mat-caption" fxLayout="column">
+            <div id="{{i.id}}" *ngSwitchCase="'response'" class="response mat-caption" fxLayout="column">
                 <div class="header" fxLayout="row" fxLayoutAlign="start center">
                     <mat-icon class="icon-18">subdirectory_arrow_right</mat-icon>
                     <div class="text">OK</div>
                     <div fxFlex></div>
                     <div class="time">{{ i.data.time }} ms</div>
                 </div>
-                <div id="response-{{i.id}}-client">
+                <div id="{{i.id}}-client">
 
                 </div>
             </div>

@@ -1,3 +1,5 @@
+export type RedisExecuteRequestResult = "success" | "failure";
+
 export interface CommandLineParsed {
     redis_command: string;
     redis_arguments: string[];

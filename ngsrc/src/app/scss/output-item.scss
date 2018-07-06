@@ -21,6 +21,7 @@
                     }
                 }
                 .request {
+                    padding: 8px; // color: var(--vscode-editor-foreground);
                     mat-icon {
                         color: var(--vscode-editor-foreground);
                         margin-right: 8px;
@@ -31,6 +32,21 @@
                     }
                     .args {
                         color: mat-color($background, 400);
+                    }
+                    .request-result {
+                        .time {
+                            color: mat-color($background, 500);
+                        }
+                        mat-icon {
+                            margin-left: 8px;
+                            margin-right: 0;
+                            &.success {
+                                color: #50fa7b;
+                            }
+                            &.failure {
+                                color: mat-color($warn, 500);
+                            }
+                        }
                     }
                 }
                 .response {
