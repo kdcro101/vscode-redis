@@ -74,7 +74,13 @@ export class AppComponent implements OnInit {
         return item.id;
     }
     ngOnInit() {
-        console.error("ngOnInit");
+        // signal webview ready
+        const eReady: ProcMessageStrict<"w2e_webview_ready"> = {
+            name: "w2e_webview_ready",
+            data: true,
+        };
+        vscode.postMessage(eReady);
+        // -----------------------------------------------------
 
         this.command.nativeElement.style.fontFamily = codeFontFamily;
 

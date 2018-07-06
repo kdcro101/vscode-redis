@@ -1,6 +1,6 @@
 {
     "name": "vscode-redis",
-    "displayName": "vscode-redis",
+    "displayName": "Redis console",
     "description": "Redis console for Visual Studio code",
     "version": "0.0.1",
     "publisher": "kdcro101",
@@ -10,17 +10,34 @@
     "categories": [
         "Other"
     ],
+    "keywords": [
+        "redis",
+        "console",
+        "redis console",
+        "redis cli"
+    ],
     "activationEvents": [
         "onCommand:extension.startConsole"
     ],
+    "galleryBanner": {
+        "color": "#333333",
+        "theme": "dark"
+    },
+    "icon": "icons/vscode-redis.png",
+    "bugs": {
+        "url": "https://github.com/kdcro101/vscode-redis/issues"
+    },
+    "homepage": "https://github.com/kdcro101/vscode-redis/blob/master/README.md",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kdcro101/vscode-redis.git"
+    },
     "main": "./out/extension",
     "contributes": {
-        "commands": [
-            {
-                "command": "extension.startConsole",
-                "title": "Start REDIS console"
-            }
-        ],
+        "commands": [{
+            "command": "extension.startConsole",
+            "title": "Start REDIS console"
+        }],
         "configuration": {
             "type": "object",
             "title": "vscode-redis configuration",

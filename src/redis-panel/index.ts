@@ -1,6 +1,6 @@
 import * as path from "path";
-import { fromEventPattern, Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { fromEventPattern, ReplaySubject, Subject } from "rxjs";
+import { take, takeUntil } from "rxjs/operators";
 
 import * as vscode from "vscode";
 import { RedisClient } from "../redis-client/index";
@@ -14,6 +14,7 @@ export class RedisPanel {
 
     private eventDestroy = new Subject<void>();
     private eventMessage = new Subject<ProcMessage>();
+    private stateWebviewReady = new ReplaySubject<void>(1);
 
     constructor(
         private context: vscode.ExtensionContext,
@@ -56,31 +57,37 @@ export class RedisPanel {
         this.panel.reveal();
 
         RedisPanel.opened = true;
-        const tstart = Date.now();
 
-        this.redis.connect()
-            .then((result) => {
-                const data: ProcMessageStrict<"e2w_connection_state"> = {
-                    name: "e2w_connection_state",
-                    data: {
-                        state: true,
-                        time: Date.now() - tstart,
-                    },
-                };
-                this.panel.webview.postMessage(data);
+        this.stateWebviewReady.pipe(
+            take(1),
+        ).subscribe(() => {
 
-            }).catch((e) => {
-                const data: ProcMessageStrict<"e2w_connection_state"> = {
-                    name: "e2w_connection_state",
-                    data: {
-                        state: false,
-                        time: Date.now() - tstart,
-                        error: e,
-                    },
-                };
-                this.panel.webview.postMessage(data);
+            const tstart = Date.now();
 
-            });
+            this.redis.connect()
+                .then(() => {
+                    const data: ProcMessageStrict<"e2w_connection_state"> = {
+                        name: "e2w_connection_state",
+                        data: {
+                            state: true,
+                            time: Date.now() - tstart,
+                        },
+                    };
+                    this.panel.webview.postMessage(data);
+
+                }).catch((e) => {
+                    const data: ProcMessageStrict<"e2w_connection_state"> = {
+                        name: "e2w_connection_state",
+                        data: {
+                            state: false,
+                            time: Date.now() - tstart,
+                            error: e,
+                        },
+                    };
+                    this.panel.webview.postMessage(data);
+
+                });
+        });
     }
     public reveal() {
         return this.panel.reveal();
@@ -95,6 +102,9 @@ export class RedisPanel {
         switch (name) {
             case "w2e_redis_execute_request":
                 this.onRedisExecuteRequest(message.data);
+                break;
+            case "w2e_webview_ready":
+                this.stateWebviewReady.next();
                 break;
         }
     }
