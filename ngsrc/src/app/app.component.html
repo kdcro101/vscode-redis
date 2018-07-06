@@ -48,7 +48,7 @@
         <button mat-icon-button>
             <mat-icon>history</mat-icon>
         </button>
-        <input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [(ngModel)]="commandLineCurrent" type="text" placeholder="Enter redis command..."
+        <input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress" [(ngModel)]="commandLineCurrent" type="text" placeholder="Enter redis command..."
         />
         <button mat-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">EXECUTE</button>
     </div>

@@ -173,6 +173,8 @@ export class AppComponent implements OnInit {
             console.log(e);
 
             this.commandInProgress = false;
+            this.commandLineReset();
+
             this.change.detectChanges();
             console.log("Execute done!");
         }, (e) => {
@@ -337,6 +339,10 @@ export class AppComponent implements OnInit {
     }
     public outputClear = () => {
         this.output = [];
+        this.change.detectChanges();
+    }
+    public commandLineReset() {
+        this.commandLineCurrent = null;
         this.change.detectChanges();
     }
 }
