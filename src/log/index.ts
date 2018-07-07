@@ -17,5 +17,8 @@ export class RedisLog {
             });
 
     }
+    public append(line: string) {
+
+    }
 
 }

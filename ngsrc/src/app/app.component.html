@@ -48,9 +48,22 @@
         <button mat-icon-button>
             <mat-icon>history</mat-icon>
         </button>
-        <input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress" [(ngModel)]="commandLineCurrent" type="text" placeholder="Enter redis command..."
-        />
-        <button mat-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">EXECUTE</button>
+        <input mat-input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress"
+            [formControl]="commandControl" type="text" placeholder="Enter redis command..." [matAutocomplete]="auto" />
+        <mat-autocomplete #auto="matAutocomplete" class="command-autocomplete"
+        (optionSelected)="eventAutocompleteSelected.next($event)"
+        (opened)="eventAutocompleteState.next('opened')" (closed)="eventAutocompleteState.next('closed')">
+
+            <mat-option *ngFor="let i of commandFiltered | async" [value]=" i.name">
+                <div class="wrap">
+                    <div class="mat-body-2 name">{{ i.name }}</div>
+                    <div class="mat-caption summary">{{ i.summary }}</div>
+                </div>
+            </mat-option>
+        </mat-autocomplete>
+        <button mat-icon-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">
+            <mat-icon>keyboard_return</mat-icon>
+        </button>
     </div>
 </div>
-<command-reference [@animReference]  *ngIf="helper.stateCommandReference | async"></command-reference>
+<command-reference [@animReference] *ngIf="helper.stateCommandReference | async"></command-reference>

@@ -9,27 +9,22 @@ export function isValidInput(commandLine: string): boolean {
         return true; // just starting - it is valid state
     }
 
-    const isStarting = commandLine.search(/\s*[a-z0-9]+$/i);
     const compact = compactCommandLine(commandLine);
+    const extracted = extractRedisCommand(commandLine);
 
-    if (isStarting === 0) {
-        console.log(`isStarting #${commandLine}# compact=#${compact}#`);
-        const c = commandReference.find((item) => item.name.search(compact.toLocaleUpperCase()) === 0);
-        if (c != null) {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        const command = extractRedisCommand(compact);
-        const valid = isRedisCommand(command);
-        console.log(`NOT isStarting #${commandLine}# valid=#${valid}#`);
-        if (valid) {
-            return true;
-        } else {
-            return false;
-        }
+    if (extracted) {
+        return true;
     }
+
+    const f = commandReference.find((item) => {
+        return item.name.toLowerCase().search(compact.toLowerCase()) === 0;
+    });
+
+    if (f) {
+        return true;
+    }
+
+    return false;
 
 }
 export function isRedisCommand(command: string) {
@@ -45,7 +40,7 @@ export function compactCommandLine(commandLine: string): string {
     if (!commandLine) {
         return null;
     }
-    const c = commandLine.replace(/\s+/g, " ").replace(/^\s+/, "").replace(/\s+$/, "");
+    const c = commandLine.replace(/\s+/g, " ").replace(/^\s*/, "").replace(/\s*$/, "");
 
     if (c.length === 0) {
         return null;
@@ -68,16 +63,25 @@ export function extractRedisCommandArguments(commandLine: string): string[] {
 }
 export function extractRedisCommand(commandLine: string): string {
     const c = compactCommandLine(commandLine);
-
+    console.log(`extractRedisCommand(${commandLine})`);
     if (c == null || c.trim() === "") {
         return null;
     }
 
     const rc = c.split(" ")[0].trim();
 
-    console.log(`extractRedisCommand(${commandLine})=${rc}`);
+    const f = commandReference.find((item) => {
+        return commandLine.toLowerCase().search(item.name.toLowerCase()) === 0;
+    });
 
-    return rc;
+    if (!f) {
+        console.log(`extractRedisCommand(${commandLine}) not found`);
+        return null;
+    }
+
+    const command = f.name;
+    console.log(`extractRedisCommand(${commandLine}) = ${command}`);
+    return command;
 
 }
 export const commandReference: CommandReferenceItem[] = [

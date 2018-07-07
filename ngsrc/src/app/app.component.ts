@@ -1,17 +1,20 @@
 import { animate, style, transition, trigger } from "@angular/animations";
 import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
-import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { FormControl } from "@angular/forms";
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material";
 import renderjson from "renderjson";
 import { fromEvent as observableFromEvent, Observable, Subject } from "rxjs";
-import { catchError, concatMap, filter, map, tap } from "rxjs/operators";
+import { catchError, concatMap, delay, filter, map, startWith, tap } from "rxjs/operators";
 import {
-    CommandLineParsed,
-    EventDataConnection, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
+    CommandLineParsed, EventDataConnection,
+    EventDataRedisExecuteResponse,
+    ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
 } from "../../../src/types/index";
-import { EventDataRedisExecuteResponse } from "../../../src/types/index";
 import { OutputItem, OutputItemStrict } from "../types";
 import { VscodeMessageInterface } from "../types/vscode";
-import { extractRedisCommand, extractRedisCommandArguments, isRedisCommand, isValidInput } from "./reference";
+import { commandReference, extractRedisCommand, extractRedisCommandArguments, isRedisCommand, isValidInput } from "./reference";
+import { CommandReferenceItem } from "./reference/index";
 import { HelperService } from "./services/helper.service";
 import { generateId, requestId, responseId } from "./string-id/index";
 
@@ -20,6 +23,8 @@ declare var redisConfig: RedisConsoleConfig;
 declare var document: Document;
 declare var window: Window;
 declare var vscode: VscodeMessageInterface;
+
+type AutocompleteState = "opened" | "closed";
 
 @Component({
     selector: "app-root",
@@ -54,6 +59,13 @@ declare var vscode: VscodeMessageInterface;
 export class AppComponent implements OnInit {
     @ViewChild("client") public client: ElementRef<HTMLDivElement>;
     @ViewChild("command") public command: ElementRef<HTMLInputElement>;
+    @ViewChild("command", { read: MatAutocompleteTrigger }) public commandAutocompleteTrigger: MatAutocompleteTrigger;
+
+    public commandList: CommandReferenceItem[] = commandReference;
+    public commandControl = new FormControl();
+    public commandFiltered: Observable<CommandReferenceItem[]>;
+    public eventAutocompleteState = new Subject<AutocompleteState>();
+    public eventAutocompleteSelected = new Subject<MatAutocompleteSelectedEvent>();
 
     public redisConfig: RedisConsoleConfig = redisConfig;
     public isDark: boolean = false;
@@ -61,6 +73,7 @@ export class AppComponent implements OnInit {
     public commandLineCurrent: string = null;
     public commandLineError: boolean = false;
     public commandInProgress: boolean = false;
+    public commandPreventExecute: boolean = false;
     // .....................
     public isConnected: boolean = false;
     public connectionDesc: string = "";
@@ -73,7 +86,6 @@ export class AppComponent implements OnInit {
     constructor(
         private host: ElementRef<HTMLDivElement>,
         public change: ChangeDetectorRef,
-        private zone: NgZone,
         public helper: HelperService,
     ) {
 
@@ -84,7 +96,7 @@ export class AppComponent implements OnInit {
             document.body.classList.contains("vscode-dark") || document.body.classList.contains("vscode-high-contrast") ? true : false;
 
         if (this.isDark) {
-            this.host.nativeElement.classList.add("dark-theme");
+            document.body.classList.add("dark-theme");
         }
 
         renderjson.set_icons("+", "−");
@@ -109,27 +121,55 @@ export class AppComponent implements OnInit {
         vscode.postMessage(eReady);
         // -----------------------------------------------------
         this.helper.stateCommandReference.subscribe(() => this.change.detectChanges());
-
+        // style command font
         this.command.nativeElement.style.fontFamily = codeFontFamily;
+
+        this.commandFiltered = this.commandControl.valueChanges
+            .pipe(
+                tap((val) => this.commandLineCurrent = val),
+                startWith(""),
+                map<any, CommandReferenceItem[]>(value => this._filter(value))
+            );
 
         this.eventCommandChange = observableFromEvent(this.command.nativeElement, "change");
         this.eventCommandKeyup = observableFromEvent<KeyboardEvent>(this.command.nativeElement, "keyup");
 
         // check enter on input!
         this.eventCommandKeyup.pipe(
+            filter((e) => this.commandPreventExecute === false),
             filter((e) => e.keyCode === 13),
             filter(() => this.commandLineCurrent.length > 1),
+            filter(() => this.commandAutocompleteTrigger.autocomplete.isOpen === false),
         ).subscribe(() => this.emitRedisExecute.next());
 
+        this.eventAutocompleteState.pipe(
+            concatMap<AutocompleteState, void>((s) => {
+                if (s === "opened") {
+                    this.commandPreventExecute = true;
+                    return Promise.resolve();
+                }
+                return new Promise((resolve, reject) => {
+                    this.commandPreventExecute = false;
+                    setTimeout(() => resolve());
+                });
+            }),
+        ).subscribe(() => {
+            console.log(`eventAutocompleteState commandPreventExecute=${this.commandPreventExecute}`);
+        });
+
         // check input validity
-        this.eventCommandKeyup.pipe(
-            // debounceTime(500),
-            map<any, boolean>(() => {
-                return isValidInput(this.commandLineCurrent);
+        // this.eventCommandKeyup.pipe(
+        // debounceTime(500),
+        this.commandControl.valueChanges.pipe(
+            tap((line) => console.log(`commandControl.valueChanges = ${line}`)),
+            map<string, boolean>((line) => {
+                return isValidInput(line);
             }),
         ).subscribe((isValid) => {
             this.commandLineError = isValid ? false : true;
             this.change.detectChanges();
+        }, (e) => {
+            console.error(e);
         });
 
         // main execute emition
@@ -342,7 +382,13 @@ export class AppComponent implements OnInit {
         this.change.detectChanges();
     }
     public commandLineReset() {
-        this.commandLineCurrent = null;
+        // this.commandLineCurrent = null;
+        this.commandControl.setValue("");
         this.change.detectChanges();
     }
+    private _filter(value: string): CommandReferenceItem[] {
+        const filterValue = value.toLowerCase().replace(/^\s*/, "").replace(/\s+$/, " ");
+        return this.commandList.filter(option => option.name.toLowerCase().search(filterValue) === 0);
+    }
 }
+;
