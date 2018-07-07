@@ -44,21 +44,17 @@
             </div>
         </div>
     </div>
-    <div class="bottom" fxLayout="row">
-        <button mat-icon-button>
-            <mat-icon>history</mat-icon>
-        </button>
-        <input mat-input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress"
-            [formControl]="commandControl" type="text" placeholder="Enter redis command..." [matAutocomplete]="auto"/>
-        <!--  [matAutocompleteDisabled]="this.commandCurrent!=null" -->
-        <mat-autocomplete #auto="matAutocomplete" class="command-autocomplete" (opened)="eventAutocompleteState.next('opened')" (closed)="eventAutocompleteState.next('closed')">
-            <mat-option *ngFor="let i of logFiltered | async" [value]=" i">
-                {{ i }}
-            </mat-option>
-        </mat-autocomplete>
-        <button mat-icon-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">
+    <div class="bottom" fxLayout="column">
+        <div fxLayout="row" class="actions">
+            <button mat-icon-button><mat-icon>history</mat-icon></button>
+            <input mat-input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress"
+                [formControl]="commandControl" type="text" placeholder="Enter redis command..." />
+
+            <button mat-icon-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">
             <mat-icon>keyboard_return</mat-icon>
         </button>
+        </div>
     </div>
 </div>
+<log-selector [@animLog] *ngIf="helper.stateCommandLog | async" [items]="logCurrent"></log-selector>
 <command-reference [@animReference] *ngIf="helper.stateCommandReference | async"></command-reference>

@@ -11,6 +11,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AppComponent } from "./app.component";
 import { CommandReferenceComponent } from "./components/command-reference/command-reference.component";
+import { LogSelectorComponent } from "./components/log-selector/log-selector.component";
 
 @NgModule({
     imports: [
@@ -29,7 +30,8 @@ import { CommandReferenceComponent } from "./components/command-reference/comman
     ],
     declarations: [
         AppComponent,
-        CommandReferenceComponent
+        CommandReferenceComponent,
+        LogSelectorComponent,
     ],
     providers: [],
     bootstrap: [AppComponent]

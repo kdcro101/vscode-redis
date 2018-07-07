@@ -7,6 +7,7 @@ import { BehaviorSubject } from "rxjs";
 export class HelperService {
 
 public stateCommandReference = new BehaviorSubject<boolean>(false);
+public stateCommandLog = new BehaviorSubject<boolean>(false);
 
 constructor() { }
 

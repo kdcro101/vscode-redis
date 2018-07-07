@@ -6,9 +6,10 @@ import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/m
 import renderjson from "renderjson";
 import {
     from as observableFrom,
-    fromEvent as observableFromEvent, Observable,
-    ReplaySubject, Subject,
+    fromEvent as observableFromEvent, merge,
+    Observable, ReplaySubject, Subject,
 } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { catchError, concatMap, delay, filter, map, startWith, take, tap } from "rxjs/operators";
 import {
     CommandLineParsed, EventDataConnection,
@@ -57,20 +58,40 @@ type AutocompleteState = "opened" | "closed";
                     opacity: 0,
                 })),
             ])
+        ]),
+        trigger("animLog", [
+            transition(":enter", [
+                style({
+                    transform: "translate3d(0,100%,0)",
+                    opacity: 0,
+                }),
+                animate("200ms ease-in-out", style({
+                    transform: "translate3d(0,0,0)",
+                    opacity: 1,
+                })),
+            ]),
+            transition(":leave", [
+                style({
+                    transform: "translate3d(0,0,0)",
+                    opacity: 1,
+                }),
+                animate("200ms ease-in-out", style({
+                    transform: "translate3d(0,100%,0)",
+                    opacity: 0,
+                })),
+            ])
         ])
     ]
 })
 export class AppComponent implements OnInit {
     @ViewChild("client") public client: ElementRef<HTMLDivElement>;
     @ViewChild("command") public command: ElementRef<HTMLInputElement>;
-    @ViewChild("command", { read: MatAutocompleteTrigger }) public commandAutocompleteTrigger: MatAutocompleteTrigger;
 
     public commandList: CommandReferenceItem[] = commandReference;
     public commandControl = new FormControl();
-    public eventAutocompleteState = new Subject<AutocompleteState>();
 
     private stateLog = new ReplaySubject<string[]>(1);
-    private logCurrent: string[] = null;
+    public logCurrent: string[] = null;
     public logFiltered: Observable<string[]>;
 
     public redisConfig: RedisConsoleConfig = redisConfig;
@@ -79,7 +100,6 @@ export class AppComponent implements OnInit {
     public commandLineCurrent: string = null;
     public commandLineError: boolean = false;
     public commandInProgress: boolean = false;
-    public commandPreventExecute: boolean = false;
     public commandCurrent: string = null;
     // .....................
     public isConnected: boolean = false;
@@ -132,27 +152,34 @@ export class AppComponent implements OnInit {
         observableFrom(this.getLog())
             .subscribe(() => {
                 console.log("initial log loaded");
+                this.change.detectChanges();
             });
 
         // -----------------------------------------------------
-        this.helper.stateCommandReference.subscribe(() => this.change.detectChanges());
+        merge(
+            this.helper.stateCommandReference,
+            this.helper.stateCommandLog
+        ).subscribe(() => this.change.detectChanges());
         // style command font
         this.command.nativeElement.style.fontFamily = codeFontFamily;
 
-        this.logFiltered = this.commandControl.valueChanges
+        this.logFiltered = observableFrom(this.commandControl.valueChanges)
             .pipe(
                 concatMap<string, string>((val) => this.stateLog.pipe(
                     take(1),
                     map(() => val)
                 )),
-                tap((val) => this.commandLineCurrent = val),
-                startWith(""),
-                map<any, string[]>(value => this._filter(value)),
+                map<string, string[]>(value => this._filter(value)),
                 catchError((e, o) => {
                     console.error(e);
                     return o;
                 }),
         );
+
+        this.stateLog.subscribe((l) => {
+            console.error("stateLog emitted");
+            console.log(l);
+        });
 
         this.eventCommandChange = observableFromEvent(this.command.nativeElement, "change");
         this.eventCommandKeyup = observableFromEvent<KeyboardEvent>(this.command.nativeElement, "keyup");
@@ -160,34 +187,19 @@ export class AppComponent implements OnInit {
         // check enter on input!
         this.eventCommandKeyup.pipe(
             filter((e) => e.keyCode === 13),
-            tap(() => console.error(`eventCommandKeyup prevent=${this.commandPreventExecute}`)),
-            filter(() => this.commandPreventExecute === false),
             filter(() => this.commandLineCurrent.length > 1),
         ).subscribe(() => this.emitRedisExecute.next());
 
-        this.eventAutocompleteState.pipe(
-            tap((s) => console.error(`eventAutocompleteState=${s}`)),
-            concatMap<AutocompleteState, boolean>((s) => {
-                if (s === "opened") {
-                    this.commandPreventExecute = true;
-                    return Promise.resolve(true);
-                }
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(false);
-                    }, 500);
-                });
-            }),
-        ).subscribe((shouldPrevent) => {
-            this.commandPreventExecute = shouldPrevent;
-            console.log(`eventAutocompleteState done shouldPrevent=${shouldPrevent}`);
-        });
+        this.eventCommandKeyup.pipe(
+            filter((e) => e.keyCode === 38),
+        ).subscribe(() => this.helper.stateCommandLog.next(true));
 
         // check input validity
         // this.eventCommandKeyup.pipe(
         // debounceTime(500),
         this.commandControl.valueChanges.pipe(
             tap((line) => console.log(`commandControl.valueChanges = ${line}`)),
+            tap((line) => this.commandLineCurrent = line),
             map<string, boolean>((line) => {
                 const valid = isValidInput(line);
                 if (valid) {
@@ -417,8 +429,18 @@ export class AppComponent implements OnInit {
         this.change.detectChanges();
     }
     private _filter(value: string): string[] {
-        const filterValue = value.toLowerCase().replace(/^\s*/, "").replace(/\s+$/, " ");
-        return this.logCurrent.filter(line => line.toLowerCase().search(filterValue) === 0);
+        console.error(`_filter(${value})`);
+        console.log(`logCurrent`);
+        console.log(this.logCurrent);
+
+        try {
+            const filterValue = value.toLowerCase().replace(/^\s*/, "").replace(/\s+$/, " ");
+            return this.logCurrent.filter(line => line.toLowerCase().search(filterValue) === 0);
+
+        } catch (e) {
+            console.log(e);
+            return ["a", "b", "c"];
+        }
     }
     private getLog(): Promise<string[]> {
         return new Promise((resolve, reject) => {

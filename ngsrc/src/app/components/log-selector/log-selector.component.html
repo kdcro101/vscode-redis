@@ -1,0 +1,5 @@
+<div #root class="root mat-app-background mat-elevation-z2">
+    <div #items *ngFor="let i of items;let ix=index;" class="item mat-body-1" [class.selected]="selected===ix">
+        {{ i }}
+    </div>
+</div>
