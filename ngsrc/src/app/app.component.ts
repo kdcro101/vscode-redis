@@ -4,8 +4,12 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@an
 import { FormControl } from "@angular/forms";
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material";
 import renderjson from "renderjson";
-import { fromEvent as observableFromEvent, Observable, Subject } from "rxjs";
-import { catchError, concatMap, delay, filter, map, startWith, tap } from "rxjs/operators";
+import {
+    from as observableFrom,
+    fromEvent as observableFromEvent, Observable,
+    ReplaySubject, Subject,
+} from "rxjs";
+import { catchError, concatMap, delay, filter, map, startWith, take, tap } from "rxjs/operators";
 import {
     CommandLineParsed, EventDataConnection,
     EventDataRedisExecuteResponse,
@@ -63,9 +67,11 @@ export class AppComponent implements OnInit {
 
     public commandList: CommandReferenceItem[] = commandReference;
     public commandControl = new FormControl();
-    public commandFiltered: Observable<CommandReferenceItem[]>;
     public eventAutocompleteState = new Subject<AutocompleteState>();
-    public eventAutocompleteSelected = new Subject<MatAutocompleteSelectedEvent>();
+
+    private stateLog = new ReplaySubject<string[]>(1);
+    private logCurrent: string[] = null;
+    public logFiltered: Observable<string[]>;
 
     public redisConfig: RedisConsoleConfig = redisConfig;
     public isDark: boolean = false;
@@ -74,6 +80,7 @@ export class AppComponent implements OnInit {
     public commandLineError: boolean = false;
     public commandInProgress: boolean = false;
     public commandPreventExecute: boolean = false;
+    public commandCurrent: string = null;
     // .....................
     public isConnected: boolean = false;
     public connectionDesc: string = "";
@@ -81,6 +88,8 @@ export class AppComponent implements OnInit {
     public eventMessage: Observable<MessageEvent> = null;
     public eventCommandChange: Observable<Event> = null;
     public eventCommandKeyup: Observable<KeyboardEvent> = null;
+    public eventCommandFound = new Subject<string>();
+
     public emitRedisExecute = new Subject<void>();
 
     constructor(
@@ -119,42 +128,59 @@ export class AppComponent implements OnInit {
             data: true,
         };
         vscode.postMessage(eReady);
+
+        observableFrom(this.getLog())
+            .subscribe(() => {
+                console.log("initial log loaded");
+            });
+
         // -----------------------------------------------------
         this.helper.stateCommandReference.subscribe(() => this.change.detectChanges());
         // style command font
         this.command.nativeElement.style.fontFamily = codeFontFamily;
 
-        this.commandFiltered = this.commandControl.valueChanges
+        this.logFiltered = this.commandControl.valueChanges
             .pipe(
+                concatMap<string, string>((val) => this.stateLog.pipe(
+                    take(1),
+                    map(() => val)
+                )),
                 tap((val) => this.commandLineCurrent = val),
                 startWith(""),
-                map<any, CommandReferenceItem[]>(value => this._filter(value))
-            );
+                map<any, string[]>(value => this._filter(value)),
+                catchError((e, o) => {
+                    console.error(e);
+                    return o;
+                }),
+        );
 
         this.eventCommandChange = observableFromEvent(this.command.nativeElement, "change");
         this.eventCommandKeyup = observableFromEvent<KeyboardEvent>(this.command.nativeElement, "keyup");
 
         // check enter on input!
         this.eventCommandKeyup.pipe(
-            filter((e) => this.commandPreventExecute === false),
             filter((e) => e.keyCode === 13),
+            tap(() => console.error(`eventCommandKeyup prevent=${this.commandPreventExecute}`)),
+            filter(() => this.commandPreventExecute === false),
             filter(() => this.commandLineCurrent.length > 1),
-            filter(() => this.commandAutocompleteTrigger.autocomplete.isOpen === false),
         ).subscribe(() => this.emitRedisExecute.next());
 
         this.eventAutocompleteState.pipe(
-            concatMap<AutocompleteState, void>((s) => {
+            tap((s) => console.error(`eventAutocompleteState=${s}`)),
+            concatMap<AutocompleteState, boolean>((s) => {
                 if (s === "opened") {
                     this.commandPreventExecute = true;
-                    return Promise.resolve();
+                    return Promise.resolve(true);
                 }
                 return new Promise((resolve, reject) => {
-                    this.commandPreventExecute = false;
-                    setTimeout(() => resolve());
+                    setTimeout(() => {
+                        resolve(false);
+                    }, 500);
                 });
             }),
-        ).subscribe(() => {
-            console.log(`eventAutocompleteState commandPreventExecute=${this.commandPreventExecute}`);
+        ).subscribe((shouldPrevent) => {
+            this.commandPreventExecute = shouldPrevent;
+            console.log(`eventAutocompleteState done shouldPrevent=${shouldPrevent}`);
         });
 
         // check input validity
@@ -163,7 +189,14 @@ export class AppComponent implements OnInit {
         this.commandControl.valueChanges.pipe(
             tap((line) => console.log(`commandControl.valueChanges = ${line}`)),
             map<string, boolean>((line) => {
-                return isValidInput(line);
+                const valid = isValidInput(line);
+                if (valid) {
+                    this.commandCurrent = extractRedisCommand(line);
+                } else {
+                    this.commandCurrent = null;
+                }
+                this.eventCommandFound.next(this.commandCurrent);
+                return valid;
             }),
         ).subscribe((isValid) => {
             this.commandLineError = isValid ? false : true;
@@ -174,6 +207,7 @@ export class AppComponent implements OnInit {
 
         // main execute emition
         this.emitRedisExecute.pipe(
+            tap(() => console.error("emitRedisExecute")),
             filter(() => this.commandLineCurrent.length > 1),
             tap(() => {
                 this.commandInProgress = true;
@@ -221,11 +255,6 @@ export class AppComponent implements OnInit {
             this.commandInProgress = false;
             this.change.detectChanges();
             console.log(e);
-        });
-
-        window.addEventListener("message", event => {
-            const message = event.data; // The JSON data our extension sent
-
         });
 
     }
@@ -308,6 +337,7 @@ export class AppComponent implements OnInit {
                 filter((data) => data.name === "e2w_redis_execute_response"),
                 filter((data) => data.data.id === id),
                 concatMap((data) => this.processRedisResponse(data.data)),
+                concatMap(() => this.getLog()),
             ).subscribe(() => {
                 this.scrollToBottom();
                 resolve();
@@ -386,9 +416,38 @@ export class AppComponent implements OnInit {
         this.commandControl.setValue("");
         this.change.detectChanges();
     }
-    private _filter(value: string): CommandReferenceItem[] {
+    private _filter(value: string): string[] {
         const filterValue = value.toLowerCase().replace(/^\s*/, "").replace(/\s+$/, " ");
-        return this.commandList.filter(option => option.name.toLowerCase().search(filterValue) === 0);
+        return this.logCurrent.filter(line => line.toLowerCase().search(filterValue) === 0);
+    }
+    private getLog(): Promise<string[]> {
+        return new Promise((resolve, reject) => {
+
+            const logReq: ProcMessageStrict<"w2e_log_request"> = {
+                name: "w2e_log_request",
+                data: true,
+            };
+            vscode.postMessage(logReq);
+
+            this.eventMessage.pipe(
+                map<MessageEvent, ProcMessage>((event) => event.data),
+                filter((data) => data.name === "e2w_log_response"),
+                map<ProcMessage, ProcMessageStrict<"e2w_log_response">>((data) => {
+                    return data as ProcMessageStrict<"e2w_log_response">;
+                }),
+                map((data) => data.data),
+            ).subscribe((log) => {
+                console.error("Got logs!");
+                console.log(log);
+                this.logCurrent = log;
+                this.stateLog.next(log);
+                resolve(log);
+            }, (e) => {
+                this.logCurrent = [];
+                this.stateLog.next([]);
+                reject(e);
+            });
+
+        });
     }
 }
-;

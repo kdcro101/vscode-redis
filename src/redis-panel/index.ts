@@ -3,6 +3,7 @@ import { fromEventPattern, ReplaySubject, Subject } from "rxjs";
 import { take, takeUntil } from "rxjs/operators";
 
 import * as vscode from "vscode";
+import { RedisLog } from "../log";
 import { RedisClient } from "../redis-client/index";
 import { EventDataRedisExecuteRequest, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig } from "../types";
 import { generateHtml } from "./html";
@@ -19,6 +20,7 @@ export class RedisPanel {
     constructor(
         private context: vscode.ExtensionContext,
         private config: RedisConsoleConfig,
+        private log: RedisLog,
     ) {
         this.redis = new RedisClient(this.config);
         this.panel = vscode.window.createWebviewPanel("redis-console", "Redis console", vscode.ViewColumn.Beside, {
@@ -106,7 +108,23 @@ export class RedisPanel {
             case "w2e_webview_ready":
                 this.stateWebviewReady.next();
                 break;
+            case "w2e_log_request":
+                this.onLogRequest();
+                break;
         }
+    }
+    private onLogRequest() {
+        this.log.read()
+            .then((result) => {
+                const response: ProcMessageStrict<"e2w_log_response"> = {
+                    name: "e2w_log_response",
+                    data: result,
+                };
+                this.panel.webview.postMessage(response);
+
+            }).catch((e) => {
+                console.error(e);
+            });
     }
     private onRedisExecuteRequest(data: EventDataRedisExecuteRequest) {
 
@@ -126,6 +144,10 @@ export class RedisPanel {
                 };
                 this.panel.webview.postMessage(response);
 
+                return this.log.append(data);
+
+            }).then(() => {
+                console.log("Log appended");
             }).catch((e: any) => {
                 console.log(e);
                 const response: ProcMessageStrict<"e2w_redis_execute_response"> = {

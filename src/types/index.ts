@@ -12,6 +12,8 @@ export interface MessageEventList {
     w2e_redis_execute_request: EventDataRedisExecuteRequest;
     e2w_redis_execute_response: EventDataRedisExecuteResponse;
     w2e_webview_ready: boolean;
+    w2e_log_request: boolean;
+    e2w_log_response: string[];
 }
 
 export interface RedisConsoleConfig {
@@ -32,6 +34,7 @@ export interface EventDataRedisExecuteRequest {
     id: string;
     command: CommandLineParsed;
 }
+
 export interface EventDataRedisExecuteResponse {
     id: string;
     result: any;

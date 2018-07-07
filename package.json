@@ -34,10 +34,12 @@
     },
     "main": "./out/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.startConsole",
-            "title": "Start REDIS console"
-        }],
+        "commands": [
+            {
+                "command": "extension.startConsole",
+                "title": "Start REDIS console"
+            }
+        ],
         "configuration": {
             "type": "object",
             "title": "vscode-redis configuration",
@@ -84,6 +86,7 @@
     "dependencies": {
         "fs-extra": "^6.0.1",
         "ioredis": "^3.2.2",
+        "lodash": "^4.17.10",
         "rxjs": "^6.2.1"
     }
 }

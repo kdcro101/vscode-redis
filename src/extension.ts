@@ -24,7 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
             redisPanel.reveal();
             return;
         }
-        redisPanel = new RedisPanel(context, config);
+        redisPanel = new RedisPanel(context, config, log);
         redisPanel.start();
     });
 
