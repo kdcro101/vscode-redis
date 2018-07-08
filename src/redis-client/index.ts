@@ -34,7 +34,8 @@ export class RedisClient {
     }
     public execute(command: CommandLineParsed) {
         return new Promise((resolve, reject) => {
-            this.client.send_command(command.redis_command, ...command.redis_arguments)
+            // command needs to be lowercase to be parsed HGETALL -> hgetall
+            this.client.send_command(command.redis_command.toLowerCase(), ...command.redis_arguments)
                 .then((result) => {
                     resolve(result);
                 }).catch((e) => {

@@ -6,6 +6,8 @@ import { Workspace } from "../workspace";
 
 export class RedisLog {
     private logPath: string = null;
+    private logLast: LogItem = null;
+
     constructor(private workspace: Workspace) {
 
         const root = this.workspace.getSingleRootPath();
@@ -13,7 +15,7 @@ export class RedisLog {
 
         fs.ensureFile(this.logPath)
             .then((result) => {
-                console.log("OK");
+
             }).catch((e) => {
                 console.log(e);
             });
@@ -27,6 +29,12 @@ export class RedisLog {
                 command: data.command.redis_command,
                 arguments: data.command.redis_arguments.join(" "),
             };
+
+            if (this.logLast && this.logLast.command === item.command && this.logLast.arguments === item.arguments) {
+                resolve();
+                return;
+            }
+
             const str = JSON.stringify(item);
 
             fs.appendFile(this.logPath, `${str}\n`)
@@ -64,6 +72,10 @@ export class RedisLog {
                         }
                         return o;
                     }).filter((i) => i != null);
+
+                    if (parsed.length > 0) {
+                        this.logLast = parsed[parsed.length - 1];
+                    }
 
                     resolve(parsed);
 

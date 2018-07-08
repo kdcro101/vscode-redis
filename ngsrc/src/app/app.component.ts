@@ -2,19 +2,12 @@ import { animate, style, transition, trigger } from "@angular/animations";
 import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material";
 import renderjson from "renderjson";
-import {
-    from as observableFrom,
-    fromEvent as observableFromEvent, merge,
-    Observable, ReplaySubject, Subject,
-} from "rxjs";
-import { BehaviorSubject } from "rxjs";
-import { catchError, concatMap, delay, filter, map, mergeMap, startWith, take, tap } from "rxjs/operators";
+import { from as observableFrom, fromEvent as observableFromEvent, merge, Observable, ReplaySubject, Subject } from "rxjs";
+import { catchError, concatMap, filter, map, mergeMap, take, tap } from "rxjs/operators";
 import {
     CommandLineParsed, EventDataConnection,
-    EventDataRedisExecuteResponse,
-    LogItem, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
+    EventDataRedisExecuteResponse, LogItem, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
 } from "../../../src/types/index";
 import { OutputItem, OutputItemStrict } from "../types";
 import { VscodeMessageInterface } from "../types/vscode";
@@ -87,6 +80,8 @@ export class AppComponent implements OnInit {
     @ViewChild("client") public client: ElementRef<HTMLDivElement>;
     @ViewChild("command") public command: ElementRef<HTMLInputElement>;
 
+    public codeFont = codeFontFamily;
+
     public commandList: CommandReferenceItem[] = commandReference;
     public commandControl = new FormControl();
 
@@ -151,7 +146,6 @@ export class AppComponent implements OnInit {
 
         observableFrom(this.getLog())
             .subscribe(() => {
-                console.log("initial log loaded");
                 this.change.detectChanges();
             });
 
@@ -179,7 +173,6 @@ export class AppComponent implements OnInit {
             mergeMap(() => this.helper.stateCommandLog.pipe(
                 take(1),
             )),
-            tap((state) => console.error(`stateCommandLog === ${state}`)),
             filter((state) => state === false),
             filter(() => this.commandLineCurrent.length > 1),
         ).subscribe(() => this.emitRedisExecute.next());
@@ -214,7 +207,6 @@ export class AppComponent implements OnInit {
 
         // main execute emition
         this.emitRedisExecute.pipe(
-            tap(() => console.error("emitRedisExecute")),
             filter(() => this.commandLineCurrent.length > 1),
             tap(() => {
                 this.commandInProgress = true;
@@ -224,9 +216,7 @@ export class AppComponent implements OnInit {
                 const c = extractRedisCommand(this.commandLineCurrent);
                 const a = extractRedisCommandArguments(this.commandLineCurrent);
                 const isCommand = isRedisCommand(c);
-                console.log(`comandline: ${this.commandLineCurrent} command: ${c} isValid: ${isCommand}`);
                 if (isCommand) {
-                    console.log(`Command ${c} is valid`);
                     return {
                         command_line: this.commandLineCurrent,
                         redis_command: c,
@@ -234,15 +224,10 @@ export class AppComponent implements OnInit {
                         valid: true,
                     };
                 } else {
-                    console.log(`Command ${c} is INVALID`);
                     this.commandInProgress = false;
                     this.change.detectChanges();
                     throw new Error(`${c} is not valid command`);
                 }
-            }),
-            tap<CommandLineParsed>((data) => {
-                console.log("CommandLineParsed");
-                console.log(data);
             }),
             filter((data) => data.valid === true),
             concatMap((data) => this.redisCommandExecute(data)),
@@ -251,26 +236,22 @@ export class AppComponent implements OnInit {
                 return o;
             })
         ).subscribe((e) => {
-            console.log(e);
 
             this.commandInProgress = false;
             this.commandLineReset();
 
             this.change.detectChanges();
-            console.log("Execute done!");
         }, (e) => {
             this.commandInProgress = false;
             this.change.detectChanges();
-            console.log(e);
         });
+
+        this.command.nativeElement.focus();
 
     }
     private onIncommingMessage(event: MessageEvent) {
         const message = event.data as ProcMessage;
         const name: ProcMessageType = message.name as ProcMessageType;
-
-        console.error("onIncommingMessage");
-        console.log(event);
 
         switch (name) {
             case "e2w_connection_state":
@@ -308,7 +289,6 @@ export class AppComponent implements OnInit {
     }
     private redisCommandExecute(command: CommandLineParsed) {
         return new Promise((resolve, reject) => {
-            console.log(`redisCommandExecute: ${command.command_line}`);
 
             const id = generateId();
             const uiRequestId = requestId(id);
@@ -440,8 +420,6 @@ export class AppComponent implements OnInit {
                 }),
                 map((data) => data.data),
             ).subscribe((log) => {
-                console.error("Got logs!");
-                console.log(log);
                 this.logCurrent = log;
                 this.stateLog.next(log);
                 resolve(log);

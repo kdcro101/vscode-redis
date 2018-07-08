@@ -98,8 +98,6 @@ export class RedisPanel {
         this.panel.dispose();
     }
     private onMessage(message: ProcMessage) {
-        console.error("Message received in obervable");
-        console.error(message);
         const name = message.name as ProcMessageType;
         switch (name) {
             case "w2e_redis_execute_request":
@@ -132,8 +130,7 @@ export class RedisPanel {
 
         this.redis.execute(data.command)
             .then((result) => {
-                console.log("result is...");
-                console.log(result);
+
                 const response: ProcMessageStrict<"e2w_redis_execute_response"> = {
                     name: "e2w_redis_execute_response",
                     data: {
@@ -149,7 +146,7 @@ export class RedisPanel {
             }).then(() => {
                 console.log("Log appended");
             }).catch((e: any) => {
-                console.log(e);
+
                 const response: ProcMessageStrict<"e2w_redis_execute_response"> = {
                     name: "e2w_redis_execute_response",
                     data: {

@@ -14,9 +14,6 @@
         </button>
     </div>
     <div #client fxFlex class="client">
-        <!-- <div>
-            <a href="https://www.google.com" target="_blank">Google</a>
-        </div> -->
         <div class="output-item" *ngFor="let i of output;trackBy:trackById;let ix=index;" [ngSwitch]="i.type">
             <div id="{{i.id}}" *ngSwitchCase="'infoSuccess'" class="emphisized infoSuccess mat-caption" fxLayout="row" fxLayoutAlign="start center">
                 <mat-icon class="icon-18">check</mat-icon>
@@ -27,7 +24,7 @@
                 <mat-icon class="icon-18">check</mat-icon>
                 <div class="text" fxFlex>{{ i.data }}</div>
             </div>
-            <div id="{{i.id}}" *ngSwitchCase="'request'" class="emphisized request mat-caption" fxLayout="row" fxLayoutAlign="start center">
+            <div id="{{i.id}}" *ngSwitchCase="'request'" class="emphisized request mat-caption" fxLayout="row" fxLayoutAlign="start center" [style.font-family]="codeFont">
                 <mat-icon class="icon-18">keyboard_arrow_right</mat-icon>
                 <div class="command">{{ i.data.command }}</div>
                 <div class="args">{{ i.data.args }}</div>

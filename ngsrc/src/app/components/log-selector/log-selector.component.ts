@@ -96,7 +96,7 @@ export class LogSelectorComponent implements OnInit, OnDestroy {
             if (e.keyCode === 40) {
                 this.moveDown();
             }
-            console.log(`after = ${this.selected}`);
+
         });
 
     }
@@ -158,7 +158,7 @@ export class LogSelectorComponent implements OnInit, OnDestroy {
         const st = cst < 0 ? 0 : cst;
 
         this.root.nativeElement.scrollTop = st;
-        console.log(`st: ${st}`);
+
     }
     private filterLog(value: string): LogItem[] {
         const mInput = value.toLowerCase().replace(/^\s*/, "").replace(/\s*$/, "");
@@ -170,7 +170,6 @@ export class LogSelectorComponent implements OnInit, OnDestroy {
             });
 
         } catch (e) {
-            console.log(e);
             return [];
         }
     }

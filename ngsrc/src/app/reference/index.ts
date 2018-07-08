@@ -67,10 +67,12 @@ export function extractRedisCommand(commandLine: string): string {
         return null;
     }
 
-    const rc = c.split(" ")[0].trim();
+    const rc = c.split(" ")[0];
+    const rx = new RegExp(`^${rc}$`, "i");
 
     const f = commandReference.find((item) => {
-        return commandLine.toLowerCase().search(item.name.toLowerCase()) === 0;
+        // return commandLine.toLowerCase().search(item.name.toLowerCase()) === 0;
+        return item.name.search(rx) === 0;
     });
 
     if (!f) {
