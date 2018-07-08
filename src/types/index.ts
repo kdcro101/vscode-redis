@@ -13,7 +13,7 @@ export interface MessageEventList {
     e2w_redis_execute_response: EventDataRedisExecuteResponse;
     w2e_webview_ready: boolean;
     w2e_log_request: boolean;
-    e2w_log_response: string[];
+    e2w_log_response: LogItem[];
 }
 
 export interface RedisConsoleConfig {
@@ -49,4 +49,10 @@ export interface ProcMessage {
 export interface ProcMessageStrict<T extends keyof MessageEventList> extends ProcMessage {
     name: T;
     data: MessageEventList[T];
+}
+
+export interface LogItem {
+    id: string;
+    command: string;
+    arguments: string;
 }

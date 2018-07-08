@@ -3,8 +3,8 @@ import { fromEventPattern, ReplaySubject, Subject } from "rxjs";
 import { take, takeUntil } from "rxjs/operators";
 
 import * as vscode from "vscode";
-import { RedisLog } from "../log";
-import { RedisClient } from "../redis-client/index";
+import { RedisClient } from "../redis-client";
+import { RedisLog } from "../redis-log";
 import { EventDataRedisExecuteRequest, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig } from "../types";
 import { generateHtml } from "./html";
 

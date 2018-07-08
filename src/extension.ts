@@ -4,8 +4,8 @@
 
 import * as vscode from "vscode";
 import { ConfigManager } from "./config-manager";
-import { RedisLog } from "./log/index";
-import { RedisPanel } from "./redis-panel/index";
+import { RedisLog } from "./redis-log";
+import { RedisPanel } from "./redis-panel";
 import { Workspace } from "./workspace";
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

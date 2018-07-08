@@ -14,12 +14,16 @@ $default-theme: mat-light-theme($primary, $accent, $warn);
 $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 @include angular-material-theme($default-theme);
 .dark-theme {
-  @include angular-material-theme($dark-theme);
+    @include angular-material-theme($dark-theme);
 }
 
 mat-icon.icon-18 {
-  height: 18px;
-  width: 18px;
-  line-height: 18px;
-  font-size: 18px;
+    height: 18px;
+    width: 18px;
+    line-height: 18px;
+    font-size: 18px;
+}
+
+body {
+    overflow: hidden;
 }

@@ -1,7 +1,7 @@
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 import * as path from "path";
-import { EventDataRedisExecuteRequest } from "../types";
+import { EventDataRedisExecuteRequest, LogItem } from "../types";
 import { Workspace } from "../workspace";
 
 export class RedisLog {
@@ -21,9 +21,15 @@ export class RedisLog {
     }
     public append(data: EventDataRedisExecuteRequest): Promise<void> {
         return new Promise((resolve, reject) => {
-            const c = data.command.redis_command;
-            const a = data.command.redis_arguments.join(" ");
-            fs.appendFile(this.logPath, `${c} ${a}\n`)
+
+            const item: LogItem = {
+                id: data.id,
+                command: data.command.redis_command,
+                arguments: data.command.redis_arguments.join(" "),
+            };
+            const str = JSON.stringify(item);
+
+            fs.appendFile(this.logPath, `${str}\n`)
                 .then(() => {
                     return this.cutLog();
                 }).then(() => {
@@ -34,7 +40,7 @@ export class RedisLog {
 
         });
     }
-    public read(): Promise<string[]> {
+    public read(): Promise<LogItem[]> {
         return new Promise((resolve, reject) => {
             fs.readFile(this.logPath)
                 .then((result) => {
@@ -48,7 +54,18 @@ export class RedisLog {
                         resolve([]);
                         return;
                     }
-                    resolve(rows);
+                    const parsed = rows.map((i) => {
+                        let o: LogItem = null;
+
+                        try {
+                            o = JSON.parse(i);
+                        } catch (e) {
+                            o = null;
+                        }
+                        return o;
+                    }).filter((i) => i != null);
+
+                    resolve(parsed);
 
                 }).catch((e) => {
                     reject(e);

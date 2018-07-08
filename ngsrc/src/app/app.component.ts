@@ -10,11 +10,11 @@ import {
     Observable, ReplaySubject, Subject,
 } from "rxjs";
 import { BehaviorSubject } from "rxjs";
-import { catchError, concatMap, delay, filter, map, startWith, take, tap } from "rxjs/operators";
+import { catchError, concatMap, delay, filter, map, mergeMap, startWith, take, tap } from "rxjs/operators";
 import {
     CommandLineParsed, EventDataConnection,
     EventDataRedisExecuteResponse,
-    ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
+    LogItem, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
 } from "../../../src/types/index";
 import { OutputItem, OutputItemStrict } from "../types";
 import { VscodeMessageInterface } from "../types/vscode";
@@ -75,7 +75,7 @@ type AutocompleteState = "opened" | "closed";
                     transform: "translate3d(0,0,0)",
                     opacity: 1,
                 }),
-                animate("200ms ease-in-out", style({
+                animate("100ms ease-in-out", style({
                     transform: "translate3d(0,100%,0)",
                     opacity: 0,
                 })),
@@ -90,9 +90,9 @@ export class AppComponent implements OnInit {
     public commandList: CommandReferenceItem[] = commandReference;
     public commandControl = new FormControl();
 
-    private stateLog = new ReplaySubject<string[]>(1);
-    public logCurrent: string[] = null;
-    public logFiltered: Observable<string[]>;
+    private stateLog = new ReplaySubject<LogItem[]>(1);
+    public logCurrent: LogItem[] = null;
+    public logFiltered: Observable<LogItem[]>;
 
     public redisConfig: RedisConsoleConfig = redisConfig;
     public isDark: boolean = false;
@@ -107,7 +107,7 @@ export class AppComponent implements OnInit {
     public output: OutputItem[] = [];
     public eventMessage: Observable<MessageEvent> = null;
     public eventCommandChange: Observable<Event> = null;
-    public eventCommandKeyup: Observable<KeyboardEvent> = null;
+    public eventCommandKeydown: Observable<KeyboardEvent> = null;
     public eventCommandFound = new Subject<string>();
 
     public emitRedisExecute = new Subject<void>();
@@ -160,44 +160,39 @@ export class AppComponent implements OnInit {
             this.helper.stateCommandReference,
             this.helper.stateCommandLog
         ).subscribe(() => this.change.detectChanges());
+
+        this.helper.eventLogExecute.pipe(
+
+        ).subscribe((data) => {
+            this.commandControl.setValue(`${data.command} ${data.arguments}`);
+        });
+
         // style command font
         this.command.nativeElement.style.fontFamily = codeFontFamily;
 
-        this.logFiltered = observableFrom(this.commandControl.valueChanges)
-            .pipe(
-                concatMap<string, string>((val) => this.stateLog.pipe(
-                    take(1),
-                    map(() => val)
-                )),
-                map<string, string[]>(value => this._filter(value)),
-                catchError((e, o) => {
-                    console.error(e);
-                    return o;
-                }),
-        );
-
-        this.stateLog.subscribe((l) => {
-            console.error("stateLog emitted");
-            console.log(l);
-        });
-
         this.eventCommandChange = observableFromEvent(this.command.nativeElement, "change");
-        this.eventCommandKeyup = observableFromEvent<KeyboardEvent>(this.command.nativeElement, "keyup");
+        this.eventCommandKeydown = observableFromEvent<KeyboardEvent>(this.command.nativeElement, "keydown");
 
         // check enter on input!
-        this.eventCommandKeyup.pipe(
+        this.eventCommandKeydown.pipe(
             filter((e) => e.keyCode === 13),
+            mergeMap(() => this.helper.stateCommandLog.pipe(
+                take(1),
+            )),
+            tap((state) => console.error(`stateCommandLog === ${state}`)),
+            filter((state) => state === false),
             filter(() => this.commandLineCurrent.length > 1),
         ).subscribe(() => this.emitRedisExecute.next());
 
-        this.eventCommandKeyup.pipe(
+        this.eventCommandKeydown.pipe(
             filter((e) => e.keyCode === 38),
         ).subscribe(() => this.helper.stateCommandLog.next(true));
 
         // check input validity
-        // this.eventCommandKeyup.pipe(
+        // this.eventCommandKeydown.pipe(
         // debounceTime(500),
         this.commandControl.valueChanges.pipe(
+            tap((line) => this.helper.stateInput.next(line)),
             tap((line) => console.log(`commandControl.valueChanges = ${line}`)),
             tap((line) => this.commandLineCurrent = line),
             map<string, boolean>((line) => {
@@ -424,25 +419,11 @@ export class AppComponent implements OnInit {
         this.change.detectChanges();
     }
     public commandLineReset() {
-        // this.commandLineCurrent = null;
         this.commandControl.setValue("");
         this.change.detectChanges();
     }
-    private _filter(value: string): string[] {
-        console.error(`_filter(${value})`);
-        console.log(`logCurrent`);
-        console.log(this.logCurrent);
 
-        try {
-            const filterValue = value.toLowerCase().replace(/^\s*/, "").replace(/\s+$/, " ");
-            return this.logCurrent.filter(line => line.toLowerCase().search(filterValue) === 0);
-
-        } catch (e) {
-            console.log(e);
-            return ["a", "b", "c"];
-        }
-    }
-    private getLog(): Promise<string[]> {
+    private getLog(): Promise<LogItem[]> {
         return new Promise((resolve, reject) => {
 
             const logReq: ProcMessageStrict<"w2e_log_request"> = {

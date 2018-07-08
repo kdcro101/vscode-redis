@@ -1,15 +1,16 @@
 <div class="root mat-app-background" fxLayout="column">
-    <div class="top mat-body-1" fxLayout="row" fxLayoutAlign="start center">
+    <div class="top mat-body-1 mat-app-background" fxLayout="row" fxLayoutAlign="start center">
         <div class="icon header"></div>
         <div class="indicator" [class.active]="isConnected"></div>
         <div class="ellipsis-wrap" fxFlex>
             {{connectionDesc}}
         </div>
-        <button mat-icon-button matTooltip="Command reference" matTooltipPosition="below" (click)="helper.stateCommandReference.next(true)">
-            <mat-icon>help_outline</mat-icon>
-        </button>
+        <button mat-icon-button><mat-icon>history</mat-icon></button>
         <button mat-icon-button matTooltip="Clear output" matTooltipPosition="below" (click)="outputClear()">
             <mat-icon>clear_all</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Command reference" matTooltipPosition="below" (click)="helper.stateCommandReference.next(true)">
+            <mat-icon>help_outline</mat-icon>
         </button>
     </div>
     <div #client fxFlex class="client">
@@ -45,8 +46,9 @@
         </div>
     </div>
     <div class="bottom" fxLayout="column">
-        <div fxLayout="row" class="actions">
-            <button mat-icon-button><mat-icon>history</mat-icon></button>
+        <log-selector [@animLog] *ngIf="helper.stateCommandLog | async" [items]="logCurrent"></log-selector>
+        <div fxLayout="row" class="actions mat-app-background">
+            <button mat-icon-button><mat-icon>keyboard_arrow_right</mat-icon></button>
             <input mat-input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress"
                 [formControl]="commandControl" type="text" placeholder="Enter redis command..." />
 
@@ -56,5 +58,4 @@
         </div>
     </div>
 </div>
-<log-selector [@animLog] *ngIf="helper.stateCommandLog | async" [items]="logCurrent"></log-selector>
 <command-reference [@animReference] *ngIf="helper.stateCommandReference | async"></command-reference>
