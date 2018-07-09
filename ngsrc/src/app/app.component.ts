@@ -1,14 +1,10 @@
 import { animate, style, transition, trigger } from "@angular/animations";
 import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import renderjson from "renderjson";
-import {
-    BehaviorSubject, from as observableFrom,
-    fromEvent as observableFromEvent, interval, merge, Observable, ReplaySubject, Subject
-} from "rxjs";
-import { catchError, concatMap, filter, map, take, tap } from "rxjs/operators";
-
+import { BehaviorSubject, from as observableFrom, fromEvent as observableFromEvent, merge, Observable, ReplaySubject, Subject } from "rxjs";
+import { catchError, concatMap, filter, map, takeUntil, tap } from "rxjs/operators";
 import {
     CommandLineParsed, EventDataConnection, EventDataRedisExecuteResponse,
     LogItem, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig, RedisEvent
@@ -78,15 +74,17 @@ declare var vscode: VscodeMessageInterface;
         ])
     ]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
     @ViewChild("client") public client: ElementRef<HTMLDivElement>;
     @ViewChild("command") public command: ElementRef<HTMLInputElement>;
 
     public codeFont = codeFontFamily;
     public connectionData: EventDataConnection = null;
+    public eventDestroyed = new Subject<void>();
 
     public commandList: CommandReferenceItem[] = commandReference;
     public commandControl = new FormControl();
+    public stateInputEnabled = new BehaviorSubject<boolean>(false);
 
     private stateLog = new ReplaySubject<LogItem[]>(1);
     public logCurrent: LogItem[] = null;
@@ -215,6 +213,7 @@ export class AppComponent implements OnInit {
         this.emitRedisExecute.pipe(
             filter(() => this.commandLineCurrent.length > 1),
             tap(() => {
+                this.inputDisable();
                 this.commandInProgress = true;
                 this.change.detectChanges();
             }),
@@ -230,6 +229,7 @@ export class AppComponent implements OnInit {
                         valid: true,
                     };
                 } else {
+                    this.inputEnable();
                     this.commandInProgress = false;
                     this.change.detectChanges();
                     throw new Error(`${c} is not valid command`);
@@ -243,19 +243,29 @@ export class AppComponent implements OnInit {
             })
         ).subscribe((e) => {
 
+            this.inputEnable();
             this.commandInProgress = false;
             this.commandLineReset();
 
             this.change.detectChanges();
         }, (e) => {
+            this.inputEnable();
             this.commandInProgress = false;
             this.change.detectChanges();
         });
 
-        interval(1000).pipe(
-            take(1)
-        ).subscribe(() => this.command.nativeElement.focus());
-
+        this.stateConnected.pipe(
+            takeUntil(this.eventDestroyed)
+        ).subscribe((s) => {
+            if (s) {
+                this.inputEnable();
+            } else {
+                this.inputDisable();
+            }
+        });
+    }
+    ngOnDestroy() {
+        this.eventDestroyed.next();
     }
     private onIncommingMessage(event: MessageEvent) {
         const message = event.data as ProcMessage;
@@ -273,18 +283,17 @@ export class AppComponent implements OnInit {
     }
     private onConnectionState(data: EventDataConnection) {
 
-        this.stateConnected.next(data.state);
-
         this.connectionData = data;
+        this.stateConnected.next(data.state);
 
         const id = generateId();
         const isError = data.error != null ? true : false;
 
-        if (isError) {
+        if (isError && data.initial) {
             const o: OutputItemStrict<"infoError"> = {
                 id,
                 type: "infoError",
-                data: `Error connecting to ${this.connectionDesc}`,
+                data: data.error,
             };
             this.output.push(o);
         }
@@ -448,10 +457,12 @@ export class AppComponent implements OnInit {
                 this.output.push(close);
                 break;
             case "reconnecting":
-                const reconnecting: OutputItemStrict<"infoError"> = {
+                const reconnecting: OutputItemStrict<"infoSuccess"> = {
                     id,
-                    type: "infoError",
-                    data: `Reconnecting...`,
+                    type: "infoSuccess",
+                    data: {
+                        text: "Reconnecting..."
+                    }
                 };
                 this.output.push(reconnecting);
                 break;
@@ -467,6 +478,16 @@ export class AppComponent implements OnInit {
                 break;
         }
 
+        this.change.detectChanges();
+    }
+    public inputDisable() {
+        this.commandControl.disable();
+        this.stateInputEnabled.next(false);
+        this.change.detectChanges();
+    }
+    public inputEnable() {
+        this.commandControl.enable();
+        this.stateInputEnabled.next(true);
         this.change.detectChanges();
     }
 }

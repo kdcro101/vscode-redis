@@ -8,7 +8,7 @@
                 <div class="mat-caption desc">Not connected</div>
                 <mat-icon class="icon-18">warning</mat-icon>
             </div>
-            <div fxLayout="row" class="connected" *ngIf="(stateConnected | async)" fxLayoutAlign="start center">
+            <div fxLayout="row" class="connected" *ngIf="(stateConnected | async)===true" fxLayoutAlign="start center">
                 <div class="mat-caption desc ellipsis-wrap">Connected in {{ connectionData.time }} ms</div>
                 <mat-icon class="icon-18">check</mat-icon>
             </div>
@@ -54,10 +54,10 @@
         <log-selector [@animLog] *ngIf="helper.stateCommandLog | async" [items]="logCurrent"></log-selector>
         <div fxLayout="row" class="actions mat-app-background" fxLayoutAlign="start center">
             <mat-icon>keyboard_arrow_right</mat-icon>
-            <input id="command" tabindex="0" mat-input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress"
-                [formControl]="commandControl" type="text" placeholder="Enter redis command..." autofocus/>
+            <input id="command" tabindex="0" mat-input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [formControl]="commandControl"
+                type="text" placeholder="Enter redis command..." autofocus/>
 
-            <button mat-icon-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">
+            <button mat-icon-button color="accent" [disabled]="(stateInputEnabled | async)===false" (click)="emitRedisExecute.next()">
             <mat-icon>keyboard_return</mat-icon>
         </button>
         </div>
