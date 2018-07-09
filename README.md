@@ -47,4 +47,4 @@ Redis console for Visual Studio Code provides ability to execute Redis commands 
  - type command into input box and press ENTER to execute
  - to open history, focus to input box on bottom of panel and press up-arrow (↑)
  - to execute command from histroy, click an item or select item with arrow keys and press enter
- - to copy command from histroy into input box, select item with arrow keys and press TAB. History panel will close, so you can modify and execute command
+ - to copy command from history into input box, select item with arrow keys and press TAB. History panel will close, so you can modify and execute command
