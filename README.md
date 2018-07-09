@@ -38,4 +38,9 @@ Redis console for Visual Studio Code provides you to ability to execute Redis co
 `[number]` IP protocol version used when connecting. Can be `4` or `6`. Default `4`
 
 
+## Usage guide
 
+ - type command into input box and press ENTER to execute
+ - to open history, focus to input box on bottom of panel and press up-arrow (↑)
+ - to execute command from histroy, click an item or select item with arrow keys and press enter
+ - to copy command from histroy into input box, select item with arrow keys and press TAB. History panel will close so you can modify it and execute
