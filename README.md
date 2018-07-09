@@ -1,6 +1,6 @@
 # Redis console 
 
-Redis console for Visual Studio Code provides you to ability to execute Redis commands in Visual Studio Code.
+Redis console for Visual Studio Code provides ability to execute Redis commands directly from your workspace.
 
 
 ## Features
