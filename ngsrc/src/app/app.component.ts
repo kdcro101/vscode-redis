@@ -3,11 +3,15 @@ import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import renderjson from "renderjson";
-import { from as observableFrom, fromEvent as observableFromEvent, merge, Observable, ReplaySubject, Subject } from "rxjs";
-import { catchError, concatMap, filter, map, mergeMap, take, tap } from "rxjs/operators";
 import {
-    CommandLineParsed, EventDataConnection,
-    EventDataRedisExecuteResponse, LogItem, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig
+    BehaviorSubject, from as observableFrom,
+    fromEvent as observableFromEvent, interval, merge, Observable, ReplaySubject, Subject
+} from "rxjs";
+import { catchError, concatMap, filter, map, take, tap } from "rxjs/operators";
+
+import {
+    CommandLineParsed, EventDataConnection, EventDataRedisExecuteResponse,
+    LogItem, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig, RedisEvent
 } from "../../../src/types/index";
 import { OutputItem, OutputItemStrict } from "../types";
 import { VscodeMessageInterface } from "../types/vscode";
@@ -21,8 +25,6 @@ declare var redisConfig: RedisConsoleConfig;
 declare var document: Document;
 declare var window: Window;
 declare var vscode: VscodeMessageInterface;
-
-type AutocompleteState = "opened" | "closed";
 
 @Component({
     selector: "app-root",
@@ -81,6 +83,7 @@ export class AppComponent implements OnInit {
     @ViewChild("command") public command: ElementRef<HTMLInputElement>;
 
     public codeFont = codeFontFamily;
+    public connectionData: EventDataConnection = null;
 
     public commandList: CommandReferenceItem[] = commandReference;
     public commandControl = new FormControl();
@@ -97,7 +100,7 @@ export class AppComponent implements OnInit {
     public commandInProgress: boolean = false;
     public commandCurrent: string = null;
     // .....................
-    public isConnected: boolean = false;
+    public stateConnected = new BehaviorSubject<boolean>(false);
     public connectionDesc: string = "";
     public output: OutputItem[] = [];
     public eventMessage: Observable<MessageEvent> = null;
@@ -168,17 +171,20 @@ export class AppComponent implements OnInit {
         this.eventCommandKeydown = observableFromEvent<KeyboardEvent>(this.command.nativeElement, "keydown");
 
         // check enter on input!
-        this.eventCommandKeydown.pipe(
-            filter((e) => e.keyCode === 13),
-            mergeMap(() => this.helper.stateCommandLog.pipe(
-                take(1),
-            )),
-            filter((state) => state === false),
+        merge(
+            this.eventCommandKeydown.pipe(
+                filter((e) => e.keyCode === 13),
+            ),
+            this.helper.eventCommandExecute,
+        ).pipe(
             filter(() => this.commandLineCurrent.length > 1),
         ).subscribe(() => this.emitRedisExecute.next());
 
-        this.eventCommandKeydown.pipe(
-            filter((e) => e.keyCode === 38),
+        merge(
+            this.eventCommandKeydown.pipe(filter((e) => e.keyCode === 38)),
+            observableFromEvent(this.command.nativeElement, "dblclick"),
+        ).pipe(
+            // takeUntil(this.eve)
         ).subscribe(() => this.helper.stateCommandLog.next(true));
 
         // check input validity
@@ -246,7 +252,9 @@ export class AppComponent implements OnInit {
             this.change.detectChanges();
         });
 
-        this.command.nativeElement.focus();
+        interval(1000).pipe(
+            take(1)
+        ).subscribe(() => this.command.nativeElement.focus());
 
     }
     private onIncommingMessage(event: MessageEvent) {
@@ -257,25 +265,22 @@ export class AppComponent implements OnInit {
             case "e2w_connection_state":
                 this.onConnectionState(message.data as EventDataConnection);
                 break;
+            case "e2w_redis_event":
+                this.onRedisEvent(message.data as RedisEvent);
+                break;
+
         }
     }
     private onConnectionState(data: EventDataConnection) {
-        this.isConnected = data.state;
+
+        this.stateConnected.next(data.state);
+
+        this.connectionData = data;
 
         const id = generateId();
         const isError = data.error != null ? true : false;
 
-        if (!isError) {
-            const o: OutputItemStrict<"infoSuccess"> = {
-                id,
-                type: "infoSuccess",
-                data: {
-                    text: "Connected",
-                    time: data.time,
-                }
-            };
-            this.output.push(o);
-        } else {
+        if (isError) {
             const o: OutputItemStrict<"infoError"> = {
                 id,
                 type: "infoError",
@@ -430,5 +435,38 @@ export class AppComponent implements OnInit {
             });
 
         });
+    }
+    private onRedisEvent(e: RedisEvent) {
+        const id = generateId();
+        switch (e) {
+            case "close":
+                const close: OutputItemStrict<"infoError"> = {
+                    id,
+                    type: "infoError",
+                    data: `Connection closed`,
+                };
+                this.output.push(close);
+                break;
+            case "reconnecting":
+                const reconnecting: OutputItemStrict<"infoError"> = {
+                    id,
+                    type: "infoError",
+                    data: `Reconnecting...`,
+                };
+                this.output.push(reconnecting);
+                break;
+            case "ready":
+                const ready: OutputItemStrict<"infoSuccess"> = {
+                    id,
+                    type: "infoSuccess",
+                    data: {
+                        text: "Connected"
+                    }
+                };
+                this.output.push(ready);
+                break;
+        }
+
+        this.change.detectChanges();
     }
 }

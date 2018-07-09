@@ -7,11 +7,13 @@
             <button mat-button color="accent" (click)="helper.stateCommandReference.next(false)">CLOSE</button>
         </mat-toolbar-row>
     </mat-toolbar>
+    <input class="filter" #filter type="text" placeholder="Filter commands..." />
     <div fxFlex class="client" fxLayout="column">
-        <div *ngFor="let i of commands;trackBy:trackById;let ix=index;" class="command">
+        <div *ngFor="let i of itemsFilteredObservable | async ; trackBy:trackById;let ix=index;" class="command">
             <div fxLayout="row" fxLayoutAlign="start center" class="title">
                 <div class="name mat-title">{{ i.name }}</div>
-                <a href="{{ i.url }}"  target="_blank" class="link" matTooltip="{{ i.name }} at redis.io" matTooltipPosition="below" fxLayout="row" fxLayoutAlign="center center" mat-ripple>
+                <a href="{{ i.url }}" target="_blank" class="link" matTooltip="{{ i.name }} at redis.io" matTooltipPosition="below" fxLayout="row"
+                    fxLayoutAlign="center center" mat-ripple>
                     <mat-icon>link</mat-icon>
                 </a>
 

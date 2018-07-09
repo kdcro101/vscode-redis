@@ -6,15 +6,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    .icon {
-        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgYmFzZVByb2ZpbGU9InRpbnkiIGhlaWdodD0iMTQ1MS4zNHB4IiBpZD0iTGF5ZXJfMSIgdmVyc2lvbj0iMS4yIiB2aWV3Qm94PSIwIDAgMTQ1MS4zNCAxNDUxLjM0IiB3aWR0aD0iMTQ1MS4zNHB4IiB4bWw6c3BhY2U9InByZXNlcnZlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48cGF0aCBkPSJNMTM4MS42OTEsMTA1OC45NGMtNzYuMTM2LDM5LjY4OS00NzAuNTU0LDIwMS44NTUtNTU0LjUyMSwyNDUuNjI0ICBjLTgzLjk3NCw0My44MDMtMTMwLjYxNiw0My4zNzYtMTk2Ljk0OSwxMS42NjRjLTY2LjMzMy0zMS43MTMtNDg2LjA1OS0yMDEuMjUxLTU2MS42NjctMjM3LjQwMiAgYy0zNy43OTMtMTguMDUxLTU3LjY1OS0zMy4zMDItNTcuNjU5LTQ3LjdWODg2LjkxM2MwLDAsNTQ2LjQyOC0xMTguOTU2LDYzNC42NDktMTUwLjYwNyAgYzg4LjIxOC0zMS42NDcsMTE4LjgxNS0zMi43ODksMTkzLjg4Ny01LjI4NmM3NS4wODIsMjcuNTAzLDUyMy45NjQsMTA4LjQ4OCw1OTguMTU4LDEzNS42NjJjMCwwLTAuMDMzLDEyOC44MDEtMC4wMzMsMTQyLjE2NyAgQzE0MzcuNTY2LDEwMjMuMTE1LDE0MjAuNDQ4LDEwMzguNzYsMTM4MS42OTEsMTA1OC45NHoiIGZpbGw9IiNBNDIxMjIiLz48cGF0aCBkPSJNMTM4MS42OTEsOTE0LjY5NGMtNzYuMTM2LDM5LjY3My00NzAuNTU0LDIwMS44NTYtNTU0LjUyMSwyNDUuNjI0ICBjLTgzLjk3NCw0My43ODYtMTMwLjYxNiw0My4zNTktMTk2Ljk0OSwxMS42NDZDNTYzLjg4LDExNDAuMjcsMTQ0LjE2Myw5NzAuNjk4LDY4LjU1NSw5MzQuNTc5ICBjLTc1LjYwOS0zNi4xMzUtNzcuMTkzLTYxLjAxNy0yLjkyLTkwLjA5MmM3NC4yNjUtMjkuMDkyLDQ5MS42ODktMTkyLjg2OCw1NzkuOTE4LTIyNC41MiAgYzg4LjIwOS0zMS42MzQsMTE4LjgxNi0zMi43OTQsMTkzLjg4Ny01LjI4M2M3NS4wNzksMjcuNDk5LDQ2Ny4xMzksMTgzLjU2LDU0MS4zMzUsMjEwLjczNSAgQzE0NTQuOTc5LDg1Mi42MTEsMTQ1Ny44MjgsODc1LjAwNCwxMzgxLjY5MSw5MTQuNjk0eiIgZmlsbD0iI0Q4MkYyNyIvPjxwYXRoIGQ9Ik0xMzgxLjY5MSw4MjMuNzgyYy03Ni4xMzYsMzkuNjg5LTQ3MC41NTQsMjAxLjg1Ni01NTQuNTIxLDI0NS42NDIgIGMtODMuOTc0LDQzLjc2OS0xMzAuNjE2LDQzLjM0My0xOTYuOTQ5LDExLjYyOWMtNjYuMzQyLTMxLjY5NS00ODYuMDU5LTIwMS4yNS01NjEuNjY3LTIzNy4zODUgIGMtMzcuNzkzLTE4LjA2Ny01Ny42NTktMzMuMjg1LTU3LjY1OS00Ny42ODRWNjUxLjc0NmMwLDAsNTQ2LjQyOC0xMTguOTUsNjM0LjY0OS0xNTAuNjAyICBjODguMjE4LTMxLjY0MywxMTguODE1LTMyLjc5NCwxOTMuODg3LTUuMjkxYzc1LjA4MiwyNy40OTksNTIzLjk2NCwxMDguNDc2LDU5OC4xNTgsMTM1LjY1NWMwLDAtMC4wMzMsMTI4Ljc5OS0wLjAzMywxNDIuMTgzICBDMTQzNy41NjYsNzg3Ljk0MSwxNDIwLjQ0OCw4MDMuNTg0LDEzODEuNjkxLDgyMy43ODJ6IiBmaWxsPSIjQTQyMTIyIi8+PHBhdGggZD0iTTEzODEuNjkxLDY3OS41MjNjLTc2LjEzNiwzOS42ODUtNDcwLjU1NCwyMDEuODUyLTU1NC41MjEsMjQ1LjYzNyAgYy04My45NzQsNDMuNzg1LTEzMC42MTYsNDMuMzQzLTE5Ni45NDksMTEuNjQ2QzU2My44OCw5MDUuMTExLDE0NC4xNjMsNzM1LjUzNSw2OC41NTUsNjk5LjQwOSAgYy03NS42MDktMzYuMTMxLTc3LjE5My02MS4wMDUtMi45Mi05MC4xMDJDMTM5LjksNTgwLjIzMyw1NTcuMzI0LDQxNi40NTMsNjQ1LjU1MywzODQuODEgIGM4OC4yMDktMzEuNjQzLDExOC44MTYtMzIuNzk0LDE5My44ODctNS4yOTFjNzUuMDc5LDI3LjQ5OCw0NjcuMTM5LDE4My41NDMsNTQxLjMzNSwyMTAuNzI3ICBDMTQ1NC45NzksNjE3LjQzNywxNDU3LjgyOCw2MzkuODM3LDEzODEuNjkxLDY3OS41MjN6IiBmaWxsPSIjRDgyRjI3Ii8+PHBhdGggZD0iTTEzODEuNjkxLDU3OS44ODljLTc2LjEzNiwzOS42ODUtNDcwLjU1NCwyMDEuODYxLTU1NC41MjEsMjQ1LjY0NSAgYy04My45NzQsNDMuNzg1LTEzMC42MTYsNDMuMzQzLTE5Ni45NDksMTEuNjQ3QzU2My44OCw4MDUuNDg0LDE0NC4xNjMsNjM1LjkxLDY4LjU1NSw1OTkuNzgzICBjLTM3Ljc5My0xOC4wNjctNTcuNjU5LTMzLjI5OC01Ny42NTktNDcuNjg3di0xNDQuMjNjMCwwLDU0Ni40MjgtMTE4Ljk1MSw2MzQuNjQ5LTE1MC41OTQgIGM4OC4yMTgtMzEuNjUyLDExOC44MTUtMzIuNzk0LDE5My44ODctNS4yOTJjNzUuMDgyLDI3LjQ5OSw1MjMuOTY0LDEwOC40NzYsNTk4LjE1OCwxMzUuNjU1YzAsMC0wLjAzMywxMjguOC0wLjAzMywxNDIuMTc0ICBDMTQzNy41NjYsNTQ0LjA1MiwxNDIwLjQ0OCw1NTkuNjkxLDEzODEuNjkxLDU3OS44ODl6IiBmaWxsPSIjQTQyMTIyIi8+PHBhdGggZD0iTTEzODEuNjkxLDQzNS42MzRjLTc2LjEzNiwzOS42ODUtNDcwLjU1NCwyMDEuODYtNTU0LjUyMSwyNDUuNjQyICBjLTgzLjk3NCw0My43NzMtMTMwLjYxNiw0My4zNDItMTk2Ljk0OSwxMS42NDNjLTY2LjMzMy0zMS43MDYtNDg2LjA1OS0yMDEuMjU5LTU2MS42NjctMjM3LjM5ICBjLTc1LjYwOS0zNi4xMzItNzcuMTkzLTYxLjAxNC0yLjkyLTkwLjEwMkMxMzkuOSwzMzYuMzM5LDU1Ny4zMjQsMTcyLjU4LDY0NS41NTMsMTQwLjkyOSAgYzg4LjIwOS0zMS42NTIsMTE4LjgxNi0zMi43OTQsMTkzLjg4Ny01LjI4N2M3NS4wNzksMjcuNTAzLDQ2Ny4xMzksMTgzLjU0OCw1NDEuMzM1LDIxMC43MzEgIEMxNDU0Ljk3OSwzNzMuNTQ0LDE0NTcuODI4LDM5NS45NTYsMTM4MS42OTEsNDM1LjYzNHoiIGZpbGw9IiNEODJGMjciLz48cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9IjkxMS4xOTUsMjk2Ljc0OSA3ODcuNTcxLDMwOS41NzggNzU5Ljg5LDM3Ni4xNjggNzE1LjE5LDMwMS44NjMgNTcyLjQ0MywyODkuMDMzIDY3OC45NTYsMjUwLjYyICAgNjQ3LjAwMywxOTEuNjU5IDc0Ni43MiwyMzAuNjU3IDg0MC43NDMsMTk5Ljg3NyA4MTUuMzI4LDI2MC44NSAiLz48cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9Ijc1Mi41MDksNjE5LjgwOCA1MjEuNzg2LDUyNC4xMTMgODUyLjM5OCw0NzMuMzc1ICIvPjxlbGxpcHNlIGN4PSI0MzIuNjM2IiBjeT0iNDAyLjI1NCIgZmlsbD0iI0ZGRkZGRiIgcng9IjE3Ni43MDQiIHJ5PSI2OC40OTUiLz48cG9seWdvbiBmaWxsPSIjNzkxNTE0IiBwb2ludHM9IjEwNTcuMjkyLDMxNC45NDcgMTI1Mi45NTcsMzkyLjI3NCAxMDU3LjQ1Niw0NjkuNTE3ICIvPjxwb2x5Z29uIGZpbGw9IiNBRDI1MjQiIHBvaW50cz0iODQwLjgyNSw0MDAuNTc1IDEwNTcuMjkyLDMxNC45NDcgMTA1Ny40NTYsNDY5LjUxNyAxMDM2LjIzNSw0NzcuODE4ICIvPjwvc3ZnPg==);
-        background-size: cover;
-        &.header {
-            width: 40px;
-            height: 40px;
-            margin-right: 16px;
-            margin-left: 8px;
-        }
+    .icon.header {
+        width: 24px;
+        height: 24px;
+        margin-right: 16px;
+        margin-left: 8px;
     }
     .ellipsis-wrap {
         min-width: 0;
@@ -66,6 +62,10 @@
         }
         .top {
             padding: 8px; // background-color: rgba(0, 0, 0, 0.125);
+            *:not(button):not(button) * {
+                user-select: none;
+                cursor: default;
+            }
             .indicator {
                 height: 16px;
                 width: 16px;
@@ -78,8 +78,32 @@
                     background-color: #50fa7b;
                 }
             }
+            .disconnected {
+                mat-icon {
+                    margin-right: 8px;
+                    margin-left: 8px;
+                    color: mat-color($warn, 500);
+                }
+                .desc {
+                    color: mat-color($background, 500);
+                }
+            }
+            .connected {
+                mat-icon {
+                    margin-right: 8px;
+                    margin-left: 8px;
+                    color: #50fa7b;
+                }
+                .desc {
+                    color: mat-color($background, 500);
+                }
+                .time {
+                    color: mat-color($background, 500);
+                }
+            }
             button {
                 margin-left: 8px;
+                cursor: pointer;
             }
         }
         .bottom {
@@ -88,6 +112,17 @@
                 padding: 8px;
                 z-index: 100;
                 position: relative;
+                *:not(button):not(button) * {
+                    user-select: none;
+                    cursor: default;
+                }
+                & > mat-icon {
+                    user-select: none;
+                    cursor: default;
+                }
+                button {
+                    cursor: pointer;
+                }
                 .command {
                     margin-left: 8px;
                     margin-right: 8px;
@@ -96,6 +131,7 @@
                     outline: none;
                     border: none;
                     background: transparent;
+                    user-select: auto;
                     &.error {
                         color: mat-color($warn, 500);
                     }

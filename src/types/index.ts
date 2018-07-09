@@ -1,4 +1,5 @@
 export type RedisExecuteRequestResult = "success" | "failure";
+export type RedisEvent = "connect" | "ready" | "error" | "close" | "reconnecting" | "end";
 
 export interface CommandLineParsed {
     redis_command: string;
@@ -14,6 +15,7 @@ export interface MessageEventList {
     w2e_webview_ready: boolean;
     w2e_log_request: boolean;
     e2w_log_response: LogItem[];
+    e2w_redis_event: RedisEvent;
 }
 
 export interface RedisConsoleConfig {
@@ -29,6 +31,7 @@ export interface EventDataConnection {
     state: boolean;
     time: number;
     error?: string;
+    initial: boolean;
 }
 export interface EventDataRedisExecuteRequest {
     id: string;

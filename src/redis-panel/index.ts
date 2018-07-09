@@ -1,11 +1,10 @@
 import * as path from "path";
-import { fromEventPattern, ReplaySubject, Subject } from "rxjs";
-import { take, takeUntil } from "rxjs/operators";
-
+import { from as observableFrom, fromEventPattern, ReplaySubject, Subject } from "rxjs";
+import { concatMap, filter, take, takeUntil, tap } from "rxjs/operators";
 import * as vscode from "vscode";
 import { RedisClient } from "../redis-client";
 import { RedisLog } from "../redis-log";
-import { EventDataRedisExecuteRequest, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig } from "../types";
+import { EventDataRedisExecuteRequest, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig, RedisEvent } from "../types";
 import { generateHtml } from "./html";
 
 export class RedisPanel {
@@ -31,7 +30,6 @@ export class RedisPanel {
                 vscode.Uri.file(path.join(context.extensionPath, "ng")),
             ],
             retainContextWhenHidden: true,
-
         });
         this.panel.onDidDispose(() => {
             RedisPanel.opened = false;
@@ -66,29 +64,44 @@ export class RedisPanel {
 
             const tstart = Date.now();
 
-            this.redis.connect()
-                .then(() => {
-                    const data: ProcMessageStrict<"e2w_connection_state"> = {
-                        name: "e2w_connection_state",
-                        data: {
-                            state: true,
-                            time: Date.now() - tstart,
-                        },
-                    };
-                    this.panel.webview.postMessage(data);
+            observableFrom(this.redis.connect()).pipe(
+                tap(() => console.log("starting connect!")),
+                concatMap(() => this.redis.stateReady.pipe(
+                    filter((e) => e === true),
+                    take(1),
+                    tap(() => console.log("ready after connect!")),
+                )),
+            ).subscribe(() => {
+                const data: ProcMessageStrict<"e2w_connection_state"> = {
+                    name: "e2w_connection_state",
+                    data: {
+                        state: true,
+                        time: Date.now() - tstart,
+                        initial: true,
+                    },
+                };
+                this.panel.webview.postMessage(data);
 
-                }).catch((e) => {
-                    const data: ProcMessageStrict<"e2w_connection_state"> = {
-                        name: "e2w_connection_state",
-                        data: {
-                            state: false,
-                            time: Date.now() - tstart,
-                            error: e,
-                        },
-                    };
-                    this.panel.webview.postMessage(data);
-
+                this.redis.eventEmitted.pipe(
+                    takeUntil(this.eventDestroy),
+                ).subscribe((e) => {
+                    console.log(e);
+                    this.onRedisEvent(e);
                 });
+
+            }, (e) => {
+                const data: ProcMessageStrict<"e2w_connection_state"> = {
+                    name: "e2w_connection_state",
+                    data: {
+                        state: false,
+                        time: Date.now() - tstart,
+                        error: e,
+                        initial: true,
+                    },
+                };
+                this.panel.webview.postMessage(data);
+
+            });
         });
     }
     public reveal() {
@@ -158,5 +171,44 @@ export class RedisPanel {
                 };
                 this.panel.webview.postMessage(response);
             });
+    }
+
+    private onRedisEvent = (event: RedisEvent) => {
+
+        // general event first
+        const e: ProcMessageStrict<"e2w_redis_event"> = {
+            name: "e2w_redis_event",
+            data: event,
+        };
+        this.panel.webview.postMessage(e);
+
+        switch (event) {
+            case "close":
+                const close: ProcMessageStrict<"e2w_connection_state"> = {
+                    name: "e2w_connection_state",
+                    data: {
+                        state: false,
+                        error: "Connection closed",
+                        time: 0,
+                        initial: false,
+                    },
+                };
+                this.panel.webview.postMessage(close);
+                break;
+            case "ready":
+                const data: ProcMessageStrict<"e2w_connection_state"> = {
+                    name: "e2w_connection_state",
+                    data: {
+                        state: true,
+                        error: null,
+                        time: 0,
+                        initial: false,
+                    },
+
+                };
+                this.panel.webview.postMessage(data);
+                break;
+        }
+
     }
 }

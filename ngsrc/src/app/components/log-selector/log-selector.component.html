@@ -1,6 +1,6 @@
 <div #root class="root mat-app-background mat-elevation-z2">
     <div #items *ngFor="let i of itemsFilteredObservable | async;let ix=index;" class="item mat-body-1" [style.font-family]="itemFont"
-        [class.selected]="selected===ix">
+        [class.selected]="selected===ix" (mousedown)="onItemClick($event,ix)">
         {{ i.command }} {{i.arguments}}
     </div>
 </div>

@@ -40,24 +40,36 @@ export function compactCommandLine(commandLine: string): string {
     if (!commandLine) {
         return null;
     }
-    const c = commandLine.replace(/\s+/g, " ").replace(/^\s*/, "").replace(/\s*$/, "");
 
+    const rx = new RegExp(/\"[^\"]*\"|\'[^\']*\'|\S+/g);
+    const matches = commandLine.match(rx);
+    // const c = commandLine.replace(/\s+/g, " ").replace(/^\s*/, "").replace(/\s*$/, "");
+
+    if (!matches || matches.length === 0) {
+        return null;
+    }
+    const c = matches.join(" ");
     if (c.length === 0) {
         return null;
     }
     return c;
 }
 export function extractRedisCommandArguments(commandLine: string): string[] {
+
     const c = compactCommandLine(commandLine);
     if (c == null || c.trim() === "") {
         return [];
     }
-    const sp = c.split(" ");
 
-    if (sp.length === 0) {
+    const rx = new RegExp(/\"[^\"]*\"|\'[^\']*\'|\S+/g);
+    const matches = c.match(rx);
+    // const sp = c.split(" ");
+
+    // less than 2 = 0 or 1 first is command so no arguments
+    if (!matches || matches.length  < 2) {
         return [];
     }
-    const out = sp.slice(1);
+    const out = matches.slice(1);
     return out;
 }
 export function extractRedisCommand(commandLine: string): string {

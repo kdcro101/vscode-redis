@@ -11,6 +11,7 @@ export class HelperService {
     public stateCommandLog = new BehaviorSubject<boolean>(false);
     public stateInput = new BehaviorSubject<string>("");
     public eventLogExecute = new Subject<LogItem>();
+    public eventCommandExecute = new Subject<void>();
 
     constructor() { }
 

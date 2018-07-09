@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
 import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
 
+import { uniqBy } from "lodash-es";
 import { fromEvent, Observable, of, ReplaySubject, Subject } from "rxjs";
-import { filter, map, mergeMap, takeUntil, tap } from "rxjs/operators";
+import { filter, map, mergeMap, take, takeUntil, tap } from "rxjs/operators";
 import { LogItem } from "../../../../../src/types/index";
 import { HelperService } from "../../services/helper.service";
 
 declare var window: Window;
+declare var document: Document;
 declare var codeFontFamily: string;
 
 @Component({
@@ -44,13 +46,17 @@ export class LogSelectorComponent implements OnInit, OnDestroy {
         return this.itemsCurrent;
     }
     ngOnInit() {
+        fromEvent(document.body, "mousedown", { capture: false }).pipe(
+            takeUntil(this.eventDestroyed),
+            take(1),
+        ).subscribe(() => this.helper.stateCommandLog.next(false));
+
         this.itemsFilteredObservable = of(true).pipe(
             mergeMap(() => this.helper.stateInput.pipe(
                 map((v) => v == null ? "" : v)
             )),
             map((input) => this.filterLog(input)),
             tap(output => this.itemsFiltered = output),
-            // tap(() => this.selectItem(this.selected))
         );
         this.itemsFilteredObservable.pipe(
             takeUntil(this.eventDestroyed),
@@ -75,15 +81,18 @@ export class LogSelectorComponent implements OnInit, OnDestroy {
 
         fromEvent<KeyboardEvent>(window, "keydown", { capture: true }).pipe(
             takeUntil(this.eventDestroyed),
-            filter((e) => e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38 || e.keyCode === 27),
+            filter((e) => e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38 || e.keyCode === 27 || e.keyCode === 9),
             tap((e) => {
-                if (e.keyCode === 13) {
+                if (e.keyCode === 9 || e.keyCode === 13) {
                     e.stopImmediatePropagation();
                     e.stopPropagation();
                     e.preventDefault();
                 }
             })
         ).subscribe((e) => {
+            if (e.keyCode === 9) {
+                this.injectItem();
+            }
             if (e.keyCode === 13) {
                 this.executeItem();
             }
@@ -104,33 +113,10 @@ export class LogSelectorComponent implements OnInit, OnDestroy {
         this.eventDestroyed.next();
     }
     private moveUp() {
-        // const m = 0;
-        // const n = this.selected - 1;
-
-        // this.selected = n;
-
-        // if (n < m) {
-        //     this.selected = m;
-        // }
-
-        // this.change.detectChanges();
-        // this.scrollToElement(this.selected);
         this.selectItem(this.selected - 1);
     }
     private moveDown() {
-        // const m = this.items.length - 1;
-        // const n = this.selected + 1;
-
-        // this.selected = n;
-
-        // if (n > m) {
-        //     this.selected = m;
-        // }
-
-        // this.change.detectChanges();
-        // this.scrollToElement(this.selected);
         this.selectItem(this.selected + 1);
-
     }
     private selectItem(index: number) {
         const max = this.itemsFiltered.length - 1;
@@ -149,31 +135,47 @@ export class LogSelectorComponent implements OnInit, OnDestroy {
         this.scrollToElement(this.selected);
     }
     private scrollToElement(index: number) {
-        const elements = this.itemsRefs.toArray();
-        const e = elements[index];
-        const ot = e.nativeElement.offsetTop;
-        const eh = e.nativeElement.offsetHeight;
-        const rh = this.root.nativeElement.offsetHeight;
-        const cst = ot - rh + eh + 16;
-        const st = cst < 0 ? 0 : cst;
+        const e = this.itemsRefs.toArray()[index];
+        if (e == null) {
+            return;
+        }
+        const item = e.nativeElement;
 
-        this.root.nativeElement.scrollTop = st;
+        const iTop = item.offsetTop;
+        const iHeight = item.offsetHeight;
+        const iBottom = iTop + iHeight;
+        const scrollClientHeight = this.root.nativeElement.offsetHeight;
+        const scrollTop = this.root.nativeElement.scrollTop;
+        const scrollBottom = scrollTop + scrollClientHeight;
+
+        if (iTop < scrollTop) {
+            this.root.nativeElement.scrollTop = iTop - 16;
+        }
+        if (iBottom > scrollBottom) {
+            this.root.nativeElement.scrollTop = iTop - scrollClientHeight + iHeight + 16;
+        }
 
     }
+
     private filterLog(value: string): LogItem[] {
         const mInput = value.toLowerCase().replace(/^\s*/, "").replace(/\s*$/, "");
 
         try {
-            return this.items.filter(item => {
+            const filtered = this.items.filter(item => {
                 const logLine = `${item.command.toLowerCase()} ${item.arguments.toLowerCase()}`;
                 return logLine.includes(mInput);
             });
+
+            // const uniq = uniqBy(filtered, (item) => {
+            //     return `${item.command} ${item.arguments}`;
+            // });
+            return filtered;
 
         } catch (e) {
             return [];
         }
     }
-    private executeItem() {
+    private injectItem() {
         const o = this.itemsFiltered.length > 0 ? this.itemsFiltered[this.selected] : null;
 
         if (o) {
@@ -181,5 +183,24 @@ export class LogSelectorComponent implements OnInit, OnDestroy {
         }
 
         this.helper.stateCommandLog.next(false);
+    }
+    private executeItem() {
+        const o = this.itemsFiltered.length > 0 ? this.itemsFiltered[this.selected] : null;
+
+        if (o) {
+            this.helper.eventLogExecute.next(o);
+            this.helper.eventCommandExecute.next();
+        }
+        this.helper.stateCommandLog.next(false);
+    }
+    public onItemClick = (e: MouseEvent, index: number) => {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        e.preventDefault();
+
+        this.selectItem(index);
+        setTimeout(() => {
+            this.executeItem();
+        }, 100);
     }
 }

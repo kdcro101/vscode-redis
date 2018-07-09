@@ -1,11 +1,20 @@
 <div class="root mat-app-background" fxLayout="column">
     <div class="top mat-body-1 mat-app-background" fxLayout="row" fxLayoutAlign="start center">
         <div class="icon header"></div>
-        <div class="indicator" [class.active]="isConnected"></div>
-        <div class="ellipsis-wrap" fxFlex>
-            {{connectionDesc}}
+        <div class="connection" fxFlex fxLayout="column">
+            <div fxFlex></div>
+            <div class="ellipsis-wrap">{{connectionDesc}}</div>
+            <div fxLayout="row" class="disconnected" *ngIf="!(stateConnected | async) || (connectionData && !connectionData.state)" fxLayoutAlign="start center">
+                <div class="mat-caption desc">Not connected</div>
+                <mat-icon class="icon-18">warning</mat-icon>
+            </div>
+            <div fxLayout="row" class="connected" *ngIf="(stateConnected | async)" fxLayoutAlign="start center">
+                <div class="mat-caption desc ellipsis-wrap">Connected in {{ connectionData.time }} ms</div>
+                <mat-icon class="icon-18">check</mat-icon>
+            </div>
+            <div fxFlex></div>
         </div>
-        <button mat-icon-button><mat-icon>history</mat-icon></button>
+
         <button mat-icon-button matTooltip="Clear output" matTooltipPosition="below" (click)="outputClear()">
             <mat-icon>clear_all</mat-icon>
         </button>
@@ -17,17 +26,16 @@
         <div class="output-item" *ngFor="let i of output;trackBy:trackById;let ix=index;" [ngSwitch]="i.type">
             <div id="{{i.id}}" *ngSwitchCase="'infoSuccess'" class="emphisized infoSuccess mat-caption" fxLayout="row" fxLayoutAlign="start center">
                 <mat-icon class="icon-18">check</mat-icon>
-                <div class="text">{{ i.data.text }}</div>
-                <div class="interval">{{ i.data.time }} ms</div>
+                <div class="text" fxFlex>{{ i.data.text }}</div>
             </div>
             <div id="{{i.id}}" *ngSwitchCase="'infoError'" class="emphisized infoError mat-caption" fxLayout="row" fxLayoutAlign="start center">
                 <mat-icon class="icon-18">check</mat-icon>
                 <div class="text" fxFlex>{{ i.data }}</div>
             </div>
-            <div id="{{i.id}}" *ngSwitchCase="'request'" class="emphisized request mat-caption" fxLayout="row" fxLayoutAlign="start center" [style.font-family]="codeFont">
+            <div id="{{i.id}}" *ngSwitchCase="'request'" class="emphisized request mat-caption" fxLayout="row" fxLayoutAlign="start center">
                 <mat-icon class="icon-18">keyboard_arrow_right</mat-icon>
-                <div class="command">{{ i.data.command }}</div>
-                <div class="args">{{ i.data.args }}</div>
+                <div class="command" [style.font-family]="codeFont">{{ i.data.command }}</div>
+                <div class="args" [style.font-family]="codeFont">{{ i.data.args }}</div>
                 <div fxFlex></div>
                 <div class="request-result" *ngIf="i.data.resultType" fxLayout="row" fxLayoutAlign="start center">
                     <div class="time">{{ i.data.time }} ms</div>
@@ -44,10 +52,10 @@
     </div>
     <div class="bottom" fxLayout="column">
         <log-selector [@animLog] *ngIf="helper.stateCommandLog | async" [items]="logCurrent"></log-selector>
-        <div fxLayout="row" class="actions mat-app-background">
-            <button mat-icon-button><mat-icon>keyboard_arrow_right</mat-icon></button>
-            <input mat-input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress"
-                [formControl]="commandControl" type="text" placeholder="Enter redis command..." />
+        <div fxLayout="row" class="actions mat-app-background" fxLayoutAlign="start center">
+            <mat-icon>keyboard_arrow_right</mat-icon>
+            <input id="command" tabindex="0" mat-input #command class="command mat-body-1" fxFlex [class.error]="commandLineError" [disabled]="commandInProgress"
+                [formControl]="commandControl" type="text" placeholder="Enter redis command..." autofocus/>
 
             <button mat-icon-button color="accent" [disabled]="commandInProgress" (click)="emitRedisExecute.next()">
             <mat-icon>keyboard_return</mat-icon>

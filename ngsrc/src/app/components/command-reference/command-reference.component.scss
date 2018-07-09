@@ -22,7 +22,21 @@
                     min-width: 0;
                     position: relative;
                 }
+                button{
+                    margin-right: -8px;
+                }
             }
+        }
+        .filter {
+            padding: 8px;
+            color: var(--vscode-editor-foreground);
+            background: transparent;
+            outline: none;
+            border-top: 1px solid mat-color($background, 500);
+            border-bottom: 1px solid mat-color($background, 500);
+            border-left: none;
+            border-right: none;
+
         }
         .client {
             overflow-y: auto;
@@ -30,10 +44,10 @@
             padding: 16px;
             .command {
                 margin-bottom: 32px;
-                .title{
+                .title {
                     margin-bottom: 2px;
-                    .link{
-                        margin-left:8px;
+                    .link {
+                        margin-left: 8px;
                         opacity: 0.6;
                         border-radius: 50%;
                         overflow: hidden;
@@ -42,11 +56,11 @@
                         text-decoration: none;
                         outline: none;
                         padding: 8px;
-                        &:hover{
+                        &:hover {
                             opacity: 1;
                         }
                     }
-                    .name{
+                    .name {
                         margin-bottom: 0px;
                     }
                 }
