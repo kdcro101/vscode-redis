@@ -23,7 +23,7 @@
         "color": "#333333",
         "theme": "dark"
     },
-    "icon": "icons/vscode-redis.png",
+    "icon": "icon/vscode-redis.png",
     "bugs": {
         "url": "https://github.com/kdcro101/vscode-redis/issues"
     },

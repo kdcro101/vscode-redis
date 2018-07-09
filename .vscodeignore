@@ -8,3 +8,10 @@ tsconfig.json
 tslint.json
 ngsrc/**/*
 proc.tar.gz
+.jsbeautifyrc
+tsconfig.json
+tslint.json
+
+
+
+
