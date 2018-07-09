@@ -489,5 +489,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.commandControl.enable();
         this.stateInputEnabled.next(true);
         this.change.detectChanges();
+        this.command.nativeElement.focus();
     }
 }
