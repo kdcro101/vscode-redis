@@ -3,13 +3,21 @@
 Redis console for Visual Studio Code provides you to ability to execute Redis commands in Visual Studio Code.
 
 
-## Features at glance
+## Features
 
 - all commands supported (217 commands)
 - includes command reference
 - easily accessed command log (history)
 - configuration at wokspace level
 - trying to JSON.stringify response to provide easy-to-read data display
+
+<p align="center">
+   <img  src="https://raw.githubusercontent.com/kdcro101/vscode-redis/master/media/0.jpg" />
+</p>
+
+<p align="center">
+   <img  src="https://raw.githubusercontent.com/kdcro101/vscode-redis/master/media/1.jpg" />
+</p>
 
 ## Configuration
 
