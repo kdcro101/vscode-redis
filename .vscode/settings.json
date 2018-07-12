@@ -8,5 +8,21 @@
     },
     "favorites.sortDirection": "ASC",
     "favorites.groupsFirst": true,
-    "eslint.enable": false
+    "eslint.enable": false,
+    "favorites.root": [
+        {
+            "type": "Directory",
+            "name": "/exec/vscode-redis/.vscode",
+            "parent_id": null,
+            "id": "gsUKzSxahEv1ZXY4",
+            "workspacePath": ".vscode"
+        },
+        {
+            "type": "File",
+            "name": "/exec/vscode-redis/proc.tar.gz",
+            "parent_id": null,
+            "id": "p7JNO13hgG0UAtQr",
+            "workspacePath": "proc.tar.gz"
+        }
+    ]
 }
