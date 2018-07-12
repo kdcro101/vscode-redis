@@ -6,6 +6,8 @@
 
 Redis console for Visual Studio Code provides ability to execute Redis commands directly from your workspace.
 
+## Activation
+select `Start REDIS console` from command pallete
 
 ## Features
 
@@ -23,9 +25,9 @@ Redis console for Visual Studio Code provides ability to execute Redis commands 
    <img  src="https://raw.githubusercontent.com/kdcro101/vscode-redis/master/media/1.jpg" />
 </p>
 
-## Usage guide
+## User guide
 
- - to activate panel choose `Start REDIS console` from command pallete
+ - to activate panel, select `Start REDIS console` from command pallete
  - type command into input box and press ENTER to execute
  - to open history, focus to input box on bottom of panel and press up-arrow (↑)
  - to execute command from histroy, click an item or select item with arrow keys and press enter
