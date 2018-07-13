@@ -10,7 +10,7 @@ Redis console for Visual Studio Code provides ability to execute Redis commands 
 
 1. open your workspace
 2. select `Start REDIS console` from command pallete
-3. configure server/port/password in your workspace settings
+3. configure server/port/password in your workspace settings ([configuration](#configuration))
 
 ## Features
 
@@ -37,7 +37,7 @@ Redis console for Visual Studio Code provides ability to execute Redis commands 
  - to copy command from history into input box, select item with arrow keys and press TAB. History panel will close, so you can modify and execute command
 
 
-## Configuration
+##  <a name="configuration"></a> Configuration
 
 after configuration, restart panel
 
