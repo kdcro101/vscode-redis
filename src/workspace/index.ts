@@ -3,7 +3,11 @@ import { RedisConsoleConfig } from "../types";
 export class Workspace {
     private ws = vscode.workspace.getConfiguration();
     public getSingleRootPath(): string {
-        return vscode.workspace.workspaceFolders[0].uri.fsPath;
+        try {
+            return vscode.workspace.workspaceFolders[0].uri.fsPath;
+        } catch (e) {
+            return null;
+        }
     }
 
     public isMultiRootWorkspace(): boolean {

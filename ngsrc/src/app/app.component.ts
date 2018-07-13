@@ -293,7 +293,7 @@ export class AppComponent implements OnInit, OnDestroy {
             const o: OutputItemStrict<"infoError"> = {
                 id,
                 type: "infoError",
-                data: data.error,
+                data: "Unable to connect...",
             };
             this.output.push(o);
         }
@@ -446,6 +446,9 @@ export class AppComponent implements OnInit, OnDestroy {
         });
     }
     private onRedisEvent(e: RedisEvent) {
+        console.log("redisEvent");
+        console.log(e);
+
         const id = generateId();
         switch (e) {
             case "close":

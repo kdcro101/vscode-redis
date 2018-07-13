@@ -23,6 +23,47 @@
             "parent_id": null,
             "id": "p7JNO13hgG0UAtQr",
             "workspacePath": "proc.tar.gz"
+        },
+        {
+            "type": "Directory",
+            "name": "/exec/vscode-redis/node_modules/@types",
+            "parent_id": null,
+            "id": "dogsVOE3KDNrAGxy",
+            "workspacePath": "node_modules/@types"
+        },
+        {
+            "type": "Group",
+            "name": "sadadasd",
+            "parent_id": null,
+            "id": "lBFQVe9LTq0OnyNK"
+        },
+        {
+            "type": "Directory",
+            "name": "/exec/vscode-redis/node_modules/through",
+            "parent_id": "lBFQVe9LTq0OnyNK",
+            "id": "K6MptZ0leaWoyrS4",
+            "workspacePath": "node_modules/through"
+        },
+        {
+            "type": "Directory",
+            "name": "/exec/vscode-redis/node_modules/unique-stream",
+            "parent_id": null,
+            "id": "SfCJLAamiPUc4lwy",
+            "workspacePath": "node_modules/unique-stream"
+        },
+        {
+            "type": "Directory",
+            "name": "/exec/vscode-redis/node_modules/sprintf-js",
+            "parent_id": "lBFQVe9LTq0OnyNK",
+            "id": "ZocI42ygirCJVd0a",
+            "workspacePath": "node_modules/sprintf-js"
+        },
+        {
+            "type": "Directory",
+            "name": "/exec/vscode-redis/node_modules/yauzl",
+            "parent_id": "lBFQVe9LTq0OnyNK",
+            "id": "bJPj384CtQkXsxMq",
+            "workspacePath": "node_modules/yauzl"
         }
     ]
 }

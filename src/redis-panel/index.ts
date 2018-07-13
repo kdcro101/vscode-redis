@@ -2,9 +2,11 @@ import * as path from "path";
 import { from as observableFrom, fromEventPattern, ReplaySubject, Subject } from "rxjs";
 import { concatMap, filter, take, takeUntil, tap } from "rxjs/operators";
 import * as vscode from "vscode";
+import { ConfigManager } from "../config-manager";
 import { RedisClient } from "../redis-client";
 import { RedisLog } from "../redis-log";
 import { EventDataRedisExecuteRequest, ProcMessage, ProcMessageStrict, ProcMessageType, RedisConsoleConfig, RedisEvent } from "../types";
+import { Workspace } from "../workspace";
 import { generateHtml } from "./html";
 
 export class RedisPanel {
@@ -15,12 +17,21 @@ export class RedisPanel {
     private eventDestroy = new Subject<void>();
     private eventMessage = new Subject<ProcMessage>();
     private stateWebviewReady = new ReplaySubject<void>(1);
-
+    private configManager: ConfigManager;
+    private config: RedisConsoleConfig;
+    private log: RedisLog;
     constructor(
         private context: vscode.ExtensionContext,
-        private config: RedisConsoleConfig,
-        private log: RedisLog,
+        private workspace: Workspace,
+        // private config: RedisConsoleConfig,
+        // private log: RedisLog,
     ) {
+        this.log = new RedisLog(workspace);
+        this.configManager = new ConfigManager(workspace);
+        this.config = this.configManager.get();
+
+        this.configManager.save(this.config);
+
         this.redis = new RedisClient(this.config);
         this.panel = vscode.window.createWebviewPanel("redis-console", "Redis console", vscode.ViewColumn.Beside, {
             // Enable javascript in the webview
