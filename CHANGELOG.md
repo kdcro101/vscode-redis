@@ -1,3 +1,9 @@
+## 0.1.0 | 2018.07.13
+
+- README
+- connecting error message
+- minor bugs
+
 ## 0.0.3 | 2018.07.12
 
 - README (activation guide)
