@@ -39,7 +39,7 @@ Redis console for Visual Studio Code provides ability to execute Redis commands 
 
 ##  <a name="configuration"></a> Configuration
 
-after configuration, restart panel
+after configuration change, reopen panel 
 
 `redis-console.host`
 
