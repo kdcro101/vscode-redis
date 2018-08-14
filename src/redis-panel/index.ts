@@ -42,6 +42,8 @@ export class RedisPanel {
             ],
             retainContextWhenHidden: true,
         });
+        this.panel.iconPath = vscode.Uri.file(path.join(this.context.extensionPath, "icon", "redis.png"));
+
         this.panel.onDidDispose(() => {
             RedisPanel.opened = false;
             this.eventDestroy.next();

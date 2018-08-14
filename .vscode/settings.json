@@ -18,20 +18,6 @@
             "workspacePath": ".vscode"
         },
         {
-            "type": "File",
-            "name": "/exec/vscode-redis/proc.tar.gz",
-            "parent_id": null,
-            "id": "p7JNO13hgG0UAtQr",
-            "workspacePath": "proc.tar.gz"
-        },
-        {
-            "type": "Directory",
-            "name": "/exec/vscode-redis/node_modules/@types",
-            "parent_id": null,
-            "id": "dogsVOE3KDNrAGxy",
-            "workspacePath": "node_modules/@types"
-        },
-        {
             "type": "Group",
             "name": "sadadasd",
             "parent_id": null,
@@ -64,6 +50,63 @@
             "parent_id": "lBFQVe9LTq0OnyNK",
             "id": "bJPj384CtQkXsxMq",
             "workspacePath": "node_modules/yauzl"
+        },
+        {
+            "name": "/exec/vscode-redis/proc.tar.gz",
+            "parent_id": null,
+            "id": "boJB9uy5YmOfPZgr"
+        },
+        {
+            "type": "File",
+            "name": "/exec/vscode-redis/tslint.json",
+            "parent_id": null,
+            "id": "ESbmrVlGJ3fOAeYT",
+            "workspacePath": "tslint.json"
+        },
+        {
+            "type": "Group",
+            "name": "group",
+            "parent_id": null,
+            "id": "XcP9rKvYRlHi4p2t",
+            "iconColor": "rgb(0, 255, 255)",
+            "iconPath": "/exec/vscode-favorite-items/svg-generated/icon_5b2bdfabac15087e3088f105c89e5406.svg"
+        },
+        {
+            "type": "File",
+            "name": "/exec/vscode-redis/package.json",
+            "parent_id": "XcP9rKvYRlHi4p2t",
+            "id": "gCcHWEMbqP9xD1Ny",
+            "workspacePath": "package.json"
+        },
+        {
+            "type": "Directory",
+            "name": "/exec/vscode-redis/src",
+            "parent_id": "XcP9rKvYRlHi4p2t",
+            "id": "0zLVElauAcUPDhCK",
+            "workspacePath": "src"
+        },
+        {
+            "type": "Group",
+            "name": "subgroup",
+            "parent_id": "XcP9rKvYRlHi4p2t",
+            "id": "XyqmuHTYL8Rhb0Fi"
+        },
+        {
+            "type": "Group",
+            "name": "subsubgroup",
+            "parent_id": "XyqmuHTYL8Rhb0Fi",
+            "id": "QMJkV5j3xtTSgonv"
+        },
+        {
+            "type": "Directory",
+            "name": "/exec/vscode-redis/node_modules",
+            "parent_id": "QMJkV5j3xtTSgonv",
+            "id": "PpLeosBQauwIDOfr",
+            "workspacePath": "node_modules"
         }
-    ]
+    ],
+    "typescript.navigator.active": false,
+    "typescript.navigator.showIcons": true,
+    "typescript.navigator.showDataTypes": true,
+    "typescript.navigator.showVisibilityLabels": false
 }
