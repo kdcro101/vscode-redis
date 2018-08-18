@@ -1,3 +1,7 @@
+## 0.1.3 | 2018.07.18
+
+- readme.md fix
+
 ## 0.1.2 | 2018.07.13
 
 - icon on Redis panel 

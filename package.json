@@ -2,7 +2,7 @@
     "name": "vscode-redis",
     "displayName": "Redis console",
     "description": "Redis console for Visual Studio Code provides ability to execute Redis commands directly from your workspace.",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "publisher": "kdcro101",
     "engines": {
         "vscode": "^1.26.0"
