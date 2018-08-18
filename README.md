@@ -18,7 +18,7 @@ Redis console for Visual Studio Code provides ability to execute Redis commands 
 - includes command reference
 - easily accessed command log (history)
 - configuration at wokspace level
-- trying to JSON.stringify response to provide easy-to-read data display
+- trying to JSON.parse() response to provide easy-to-read data display
 
 <p align="center">
    <img  src="https://raw.githubusercontent.com/kdcro101/vscode-redis/master/media/0.jpg" />
