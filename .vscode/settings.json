@@ -108,5 +108,9 @@
     "typescript.navigator.active": false,
     "typescript.navigator.showIcons": true,
     "typescript.navigator.showDataTypes": true,
-    "typescript.navigator.showVisibilityLabels": false
+    "typescript.navigator.showVisibilityLabels": false,
+    "redis-console.host": "10.0.0.0",
+    "redis-console.port": 6379,
+    "redis-console.password": "",
+    "redis-console.hostIpFamily": 4
 }
