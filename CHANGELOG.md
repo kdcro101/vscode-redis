@@ -1,3 +1,7 @@
+## 1.0.2 | 2018.09.28
+
+- minor cleanup
+
 ## 1.0.1 | 2018.09.28
 
 - configuration overwrite fix

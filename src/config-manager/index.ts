@@ -22,6 +22,5 @@ export class ConfigManager {
         this.workspace.write("password", config.password);
         this.workspace.write("hostIpFamily", config.hostIpFamily);
 
-        console.log("Config saved");
     }
 }

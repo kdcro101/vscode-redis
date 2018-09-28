@@ -23,11 +23,9 @@ export class RedisPanel {
     constructor(
         private context: vscode.ExtensionContext,
         private workspace: Workspace,
-        // private config: RedisConsoleConfig,
-        // private log: RedisLog,
     ) {
         this.log = new RedisLog(workspace);
-        this.configManager = new ConfigManager(workspace);
+        this.configManager = new ConfigManager(this.workspace);
         this.config = this.configManager.get();
 
         this.configManager.save(this.config);
@@ -50,7 +48,6 @@ export class RedisPanel {
         }, null, context.subscriptions);
 
         this.panel.webview.html = generateHtml(this.context.extensionPath, this.config);
-        // this.panel.webview.postMessage({ command: "refactor" });
 
         fromEventPattern<ProcMessage>((f: (e: any) => any) => {
             return this.panel.webview.onDidReceiveMessage(f, null, context.subscriptions);

@@ -4,7 +4,6 @@ import * as vscode from "vscode";
 import { RedisConsoleConfig } from "../types";
 
 export const generateHtml = (basePath: string, config: RedisConsoleConfig) => {
-    //   const iconsPath = "vscode-resource:" + this.context.extensionPath + "/svg/symbol-sprite.svg";
     const ws = vscode.workspace.getConfiguration(null, null);
     const fontFamily = ws.editor.fontFamily;
     const configString = JSON.stringify(config);
