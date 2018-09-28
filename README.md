@@ -1,8 +1,8 @@
 # Redis console 
-
-[![Visual Studio Marketplace](https://img.shields.io/vscode-marketplace/v/kdcro101.vscode-redis.svg)](https://marketplace.visualstudio.com/items?itemName=kdcro101.vscode-redis)
-[![Installs](https://img.shields.io/vscode-marketplace/d/kdcro101.vscode-redis.svg)](https://marketplace.visualstudio.com/items?itemName=kdcro101.vscode-redis)
-[![Rating](https://img.shields.io/vscode-marketplace/r/kdcro101.vscode-redis.svg)](https://marketplace.visualstudio.com/items?itemName=kdcro101.vscode-redis)
+ 
+[![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/kdcro101.vscode-redis.svg)](https://marketplace.visualstudio.com/items?itemName=kdcro101.vscode-redis)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs-short/kdcro101.vscode-redis.svg)](https://marketplace.visualstudio.com/items?itemName=kdcro101.vscode-redis)
+[![Rating](https://vsmarketplacebadge.apphb.com/rating-short/kdcro101.vscode-redis.svg)](https://marketplace.visualstudio.com/items?itemName=kdcro101.vscode-redis)
 
 Redis console for Visual Studio Code provides ability to execute Redis commands directly from your workspace.
 

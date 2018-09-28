@@ -1,3 +1,7 @@
+## 1.0.0 | 2018.09.28
+
+- README badges update
+
 ## 0.1.3 | 2018.07.18
 
 - readme.md fix
