@@ -1,0 +1,115 @@
+[
+    {
+        "type": "Directory",
+        "name": "/exec/vscode-redis/.vscode",
+        "parent_id": null,
+        "id": "gsUKzSxahEv1ZXY4",
+        "workspacePath": ".vscode"
+    },
+    {
+        "type": "Group",
+        "name": "sadadasd",
+        "parent_id": null,
+        "id": "lBFQVe9LTq0OnyNK"
+    },
+    {
+        "type": "Directory",
+        "name": "/exec/vscode-redis/node_modules/through",
+        "parent_id": "lBFQVe9LTq0OnyNK",
+        "id": "K6MptZ0leaWoyrS4",
+        "workspacePath": "node_modules/through"
+    },
+    {
+        "type": "Directory",
+        "name": "/exec/vscode-redis/node_modules/unique-stream",
+        "parent_id": null,
+        "id": "SfCJLAamiPUc4lwy",
+        "workspacePath": "node_modules/unique-stream"
+    },
+    {
+        "type": "Directory",
+        "name": "/exec/vscode-redis/node_modules/sprintf-js",
+        "parent_id": "lBFQVe9LTq0OnyNK",
+        "id": "ZocI42ygirCJVd0a",
+        "workspacePath": "node_modules/sprintf-js"
+    },
+    {
+        "type": "Directory",
+        "name": "/exec/vscode-redis/node_modules/yauzl",
+        "parent_id": "lBFQVe9LTq0OnyNK",
+        "id": "bJPj384CtQkXsxMq",
+        "workspacePath": "node_modules/yauzl"
+    },
+    {
+        "name": "/exec/vscode-redis/proc.tar.gz",
+        "parent_id": null,
+        "id": "boJB9uy5YmOfPZgr"
+    },
+    {
+        "type": "File",
+        "name": "/exec/vscode-redis/tslint.json",
+        "parent_id": null,
+        "id": "ESbmrVlGJ3fOAeYT",
+        "workspacePath": "tslint.json"
+    },
+    {
+        "type": "Group",
+        "name": "group",
+        "parent_id": null,
+        "id": "XcP9rKvYRlHi4p2t",
+        "iconColor": "rgb(0, 255, 255)",
+        "iconPath": "/exec/vscode-favorite-items/svg-generated/icon_5b2bdfabac15087e3088f105c89e5406.svg"
+    },
+    {
+        "type": "File",
+        "name": "/exec/vscode-redis/package.json",
+        "parent_id": "XcP9rKvYRlHi4p2t",
+        "id": "gCcHWEMbqP9xD1Ny",
+        "workspacePath": "package.json"
+    },
+    {
+        "type": "Directory",
+        "name": "/exec/vscode-redis/src",
+        "parent_id": "XcP9rKvYRlHi4p2t",
+        "id": "0zLVElauAcUPDhCK",
+        "workspacePath": "src"
+    },
+    {
+        "type": "Group",
+        "name": "subgroup",
+        "parent_id": "XcP9rKvYRlHi4p2t",
+        "id": "XyqmuHTYL8Rhb0Fi"
+    },
+    {
+        "type": "Group",
+        "name": "subsubgroup",
+        "parent_id": "XyqmuHTYL8Rhb0Fi",
+        "id": "QMJkV5j3xtTSgonv"
+    },
+    {
+        "type": "Directory",
+        "name": "/exec/vscode-redis/node_modules",
+        "parent_id": "QMJkV5j3xtTSgonv",
+        "id": "PpLeosBQauwIDOfr",
+        "workspacePath": "node_modules"
+    },
+    {
+        "type": "File",
+        "name": "/exec/vscode-redis/src/workspace/index.ts",
+        "parent_id": null,
+        "workspacePath": "src/workspace/index.ts",
+        "id": "NAe4f3LFIs6zqgMO"
+    },
+    {
+        "type": "Group",
+        "name": "aa",
+        "parent_id": "XyqmuHTYL8Rhb0Fi",
+        "id": "xHgbMoGjYKuFDlOn"
+    },
+    {
+        "type": "Group",
+        "name": "qq",
+        "parent_id": null,
+        "id": "VDEAQUM3fLbvYzX1"
+    }
+]

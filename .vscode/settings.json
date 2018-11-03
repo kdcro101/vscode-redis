@@ -103,6 +103,25 @@
             "parent_id": "QMJkV5j3xtTSgonv",
             "id": "PpLeosBQauwIDOfr",
             "workspacePath": "node_modules"
+        },
+        {
+            "type": "File",
+            "name": "/exec/vscode-redis/src/workspace/index.ts",
+            "parent_id": null,
+            "workspacePath": "src/workspace/index.ts",
+            "id": "NAe4f3LFIs6zqgMO"
+        },
+        {
+            "type": "Group",
+            "name": "aa",
+            "parent_id": "XyqmuHTYL8Rhb0Fi",
+            "id": "xHgbMoGjYKuFDlOn"
+        },
+        {
+            "type": "Group",
+            "name": "qq",
+            "parent_id": null,
+            "id": "VDEAQUM3fLbvYzX1"
         }
     ],
     "typescript.navigator.active": false,
